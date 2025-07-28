@@ -2,11 +2,33 @@
 
 Color representations and conversions.
 
-<!--
 [![Test](https://github.com/crates-lurey-io/gem/actions/workflows/test.yml/badge.svg)](https://github.com/crates-lurey-io/gem/actions/workflows/test.yml)
+[![Docs](https://github.com/crates-lurey-io/gem/actions/workflows/docs.yml/badge.svg)](https://github.com/crates-lurey-io/gem/actions/workflows/docs.yml)
 [![Crates.io Version](https://img.shields.io/crates/v/gem)](https://crates.io/crates/gem)
 [![codecov](https://codecov.io/gh/crates-lurey-io/gem/graph/badge.svg?token=Z3VUWA3WYY)](https://codecov.io/gh/crates-lurey-io/gem)
--->
+
+## Examples
+
+```sh
+cargo run --example draw-png --features bytemuck
+```
+
+```rust
+use gem::prelude::*;
+
+let mut red_box_50x50 = vec![Abgr8888::new_red(0xFF); 50 * 50];
+
+// Make a semi-transparent blue box in the middle of the image
+for y in 0..50 {
+    for x in 0..50 {
+        if (10..40).contains(&x) && (10..40).contains(&y) {
+            red_box_50x50[y * 50 + x] = Abgr8888::new(128, 0, 255, 128);
+        }
+    }
+}
+```
+
+![Example](./examples/draw-png.png)
 
 ## Contributing
 

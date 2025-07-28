@@ -4,7 +4,7 @@ use crate::scalar::{
 };
 
 /// A trait for types that have a 🔵 blue component.
-pub trait WithBlue<C> {
+pub trait HasBlue<C> {
     /// Creates a new color with the given blue component.
     ///
     /// The other components are set to their default values.
@@ -29,9 +29,7 @@ pub trait WithBlue<C> {
         Self: Sized + Default,
         C: Intensity + Into<f32>,
     {
-        let mut color = Self::default();
-        color.set_blue_normalized_f32(value);
-        color
+        Self::new_blue(C::from_normalized_f32(value))
     }
 
     /// Creates a new color with the blue component set to the given normalized 64-bit floating point value.
@@ -45,9 +43,7 @@ pub trait WithBlue<C> {
         Self: Sized + Default,
         C: Intensity + Into<f64>,
     {
-        let mut color = Self::default();
-        color.set_blue_normalized_f64(value);
-        color
+        Self::new_blue(C::from_normalized_f64(value))
     }
 
     /// Returns the value of the blue component.

@@ -51,18 +51,20 @@
 //! For additional types to store alpha channels (such as [`AlphaFirst`]), see [`crate::alpha`].
 
 use crate::{
-    alpha::{AlphaFirst, AlphaLast, WithAlpha},
+    alpha::{AlphaFirst, AlphaLast, HasAlpha},
     scalar::intensity::Intensity,
 };
 
-mod with_red;
-pub use with_red::WithRed;
+mod has_red;
+pub use has_red::HasRed;
 
-mod with_blue;
-pub use with_blue::WithBlue;
+mod has_blue;
+pub use has_blue::HasBlue;
 
-mod with_green;
-pub use with_green::WithGreen;
+mod has_green;
+pub use has_green::HasGreen;
+
+mod impl_rgba;
 
 /// A trait for types that have red, green, and blue components.
 pub trait RgbColor<T> {
@@ -73,7 +75,7 @@ pub trait RgbColor<T> {
     fn new_gray(value: T) -> Self
     where
         T: Copy,
-        Self: Sized + Default + WithRed<T> + WithGreen<T> + WithBlue<T>,
+        Self: Sized + Default + HasRed<T> + HasGreen<T> + HasBlue<T>,
     {
         let mut color = Self::default();
         color.set_red(value);
@@ -86,7 +88,7 @@ pub trait RgbColor<T> {
     #[must_use]
     fn from_rgb(red: T, green: T, blue: T) -> Self
     where
-        Self: Sized + Default + WithRed<T> + WithGreen<T> + WithBlue<T>,
+        Self: Sized + Default + HasRed<T> + HasGreen<T> + HasBlue<T>,
     {
         let mut color = Self::default();
         color.set_red(red);
@@ -102,7 +104,7 @@ pub trait RgbColor<T> {
     #[must_use]
     fn from_rgb_normalized_f32(red: f32, green: f32, blue: f32) -> Self
     where
-        Self: Sized + Default + WithRed<T> + WithGreen<T> + WithBlue<T>,
+        Self: Sized + Default + HasRed<T> + HasGreen<T> + HasBlue<T>,
         T: Intensity + Into<f32>,
     {
         let red = T::from_normalized_f32(red.clamp(0.0, 1.0));
@@ -118,7 +120,7 @@ pub trait RgbColor<T> {
     #[must_use]
     fn from_rgb_normalized_f64(red: f64, green: f64, blue: f64) -> Self
     where
-        Self: Sized + Default + WithRed<T> + WithGreen<T> + WithBlue<T>,
+        Self: Sized + Default + HasRed<T> + HasGreen<T> + HasBlue<T>,
         T: Intensity + Into<f64>,
     {
         let red = T::from_normalized_f64(red.clamp(0.0, 1.0));
@@ -131,17 +133,17 @@ pub trait RgbColor<T> {
     #[must_use]
     fn into_rgb(self) -> (T, T, T)
     where
-        Self: Sized + WithRed<T> + WithGreen<T> + WithBlue<T>,
+        Self: Sized + HasRed<T> + HasGreen<T> + HasBlue<T>,
     {
         (self.red(), self.green(), self.blue())
     }
 }
 
-impl<T> RgbColor<T> for T where T: WithRed<T> + WithGreen<T> + WithBlue<T> {}
+impl<T> RgbColor<T> for T where T: HasRed<T> + HasGreen<T> + HasBlue<T> {}
 
 macro_rules! impl_rgb_with_fields {
     ($ty:ident<$t:ident>) => {
-        impl<$t> WithRed<$t> for $ty<$t>
+        impl<$t> HasRed<$t> for $ty<$t>
         where
             $t: Copy,
         {
@@ -154,7 +156,7 @@ macro_rules! impl_rgb_with_fields {
             }
         }
 
-        impl<$t> WithGreen<$t> for $ty<$t>
+        impl<$t> HasGreen<$t> for $ty<$t>
         where
             $t: Copy,
         {
@@ -167,7 +169,7 @@ macro_rules! impl_rgb_with_fields {
             }
         }
 
-        impl<$t> WithBlue<$t> for $ty<$t>
+        impl<$t> HasBlue<$t> for $ty<$t>
         where
             $t: Copy,
         {
@@ -189,7 +191,7 @@ macro_rules! impl_rgb_packed {
         green:{ shift: $gshift:expr, mask: $gmask:expr, clear: $gclear:expr },
         blue: { shift: $bshift:expr, mask: $bmask:expr, clear: $bclear:expr }
     ) => {
-        impl WithRed<u8> for $ty {
+        impl HasRed<u8> for $ty {
             fn red(&self) -> u8 {
                 ((self.packed >> $rshift) & $rmask) as u8
             }
@@ -197,7 +199,7 @@ macro_rules! impl_rgb_packed {
                 self.packed = (self.packed & $rclear) | ((u16::from(value) & $rmask) << $rshift);
             }
         }
-        impl WithGreen<u8> for $ty {
+        impl HasGreen<u8> for $ty {
             fn green(&self) -> u8 {
                 ((self.packed >> $gshift) & $gmask) as u8
             }
@@ -205,7 +207,7 @@ macro_rules! impl_rgb_packed {
                 self.packed = (self.packed & $gclear) | ((u16::from(value) & $gmask) << $gshift);
             }
         }
-        impl WithBlue<u8> for $ty {
+        impl HasBlue<u8> for $ty {
             fn blue(&self) -> u8 {
                 ((self.packed >> $bshift) & $bmask) as u8
             }
@@ -218,7 +220,7 @@ macro_rules! impl_rgb_packed {
 
 macro_rules! impl_with_alpha_packed {
     ($ty:ident, $alpha_shift:expr, $alpha_mask:expr, $alpha_clear:expr) => {
-        impl WithAlpha<u8> for $ty {
+        impl HasAlpha<u8> for $ty {
             fn alpha(&self) -> u8 {
                 ((self.packed >> $alpha_shift) & $alpha_mask) as u8
             }
@@ -263,6 +265,12 @@ impl<T> Rgb<T> {
     }
 }
 
+#[cfg(feature = "bytemuck")]
+unsafe impl<T: bytemuck::Zeroable> bytemuck::Zeroable for Rgb<T> where T: bytemuck::Zeroable {}
+
+#[cfg(feature = "bytemuck")]
+unsafe impl<T: bytemuck::Pod> bytemuck::Pod for Rgb<T> where T: bytemuck::Pod {}
+
 impl_rgb_with_fields!(Rgb<T>);
 
 /// A color representation that contains blue, green, and red components.
@@ -297,6 +305,12 @@ impl<T> Bgr<T> {
     }
 }
 
+#[cfg(feature = "bytemuck")]
+unsafe impl<T: bytemuck::Zeroable> bytemuck::Zeroable for Bgr<T> where T: bytemuck::Zeroable {}
+
+#[cfg(feature = "bytemuck")]
+unsafe impl<T: bytemuck::Pod> bytemuck::Pod for Bgr<T> where T: bytemuck::Pod {}
+
 impl_rgb_with_fields!(Bgr<T>);
 
 /// A 16-bit packed ARGB color representation.
@@ -311,6 +325,7 @@ impl_rgb_with_fields!(Bgr<T>);
 /// }
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Argb4444 {
     packed: u16,
@@ -345,6 +360,7 @@ impl_with_alpha_packed!(Argb4444, 12, 0x0F, 0x0FFF);
 /// }
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Argb1555 {
     packed: u16,
@@ -371,6 +387,7 @@ impl_with_alpha_packed!(Argb1555, 15, 0x01, 0x7FFF);
 /// }
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Rgb565 {
     packed: u16,

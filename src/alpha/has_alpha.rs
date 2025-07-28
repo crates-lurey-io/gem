@@ -4,7 +4,7 @@ use crate::scalar::{
 };
 
 /// A trait for types that have an alpha (transparency) component.
-pub trait WithAlpha<C> {
+pub trait HasAlpha<C> {
     /// Creates a new color with the given alpha component.
     ///
     /// The other components are set to their default values.
@@ -30,9 +30,7 @@ pub trait WithAlpha<C> {
         Self: Sized + Default,
         C: Intensity + Into<f32>,
     {
-        let mut color = Self::default();
-        color.set_alpha_normalized_f32(value);
-        color
+        Self::new_alpha(C::from_normalized_f32(value))
     }
 
     /// Creates a new color with the alpha component set to the given normalized 64-bit floating point value.
@@ -47,9 +45,7 @@ pub trait WithAlpha<C> {
         Self: Sized + Default,
         C: Intensity + Into<f64>,
     {
-        let mut color = Self::default();
-        color.set_alpha_normalized_f64(value);
-        color
+        Self::new_alpha(C::from_normalized_f64(value))
     }
 
     /// Returns the value of the alpha component.

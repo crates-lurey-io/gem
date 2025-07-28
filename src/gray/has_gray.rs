@@ -4,7 +4,7 @@ use crate::scalar::{
 };
 
 /// A trait for types that have a ⚫ ⚪ gray component.
-pub trait WithGray<C> {
+pub trait HasGray<C> {
     /// Creates a new color with the given gray component.
     ///
     /// The other components are set to their default values.

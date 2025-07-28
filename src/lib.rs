@@ -6,6 +6,10 @@
 //!
 //! At least one `libm` or `std` feature must be enabled to use floating-point operations.
 //!
+//! ### `bytemuck`
+//!
+//! Derives `bytemuck::Zeroable` and `bytemuck::Pod` for color types.
+//!
 //! ### `libm`
 //!
 //! _Enabled by default._
@@ -21,6 +25,14 @@
 //! ### `std`
 //!
 //! Uses the standard library instead of `libm` for mathematical operations.
+//!
+//! ## Unstable Features
+//!
+//! ### `unstable-scalar`
+//!
+//! Enables the use of unstable scalar types for color representations.
+//!
+//! This feature is not recommended for production use as it may change in future versions.
 
 #![no_std]
 

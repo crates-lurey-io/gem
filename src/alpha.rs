@@ -31,8 +31,8 @@
 
 use core::ops::{Deref, DerefMut};
 
-mod with_alpha;
-pub use with_alpha::WithAlpha;
+mod has_alpha;
+pub use has_alpha::HasAlpha;
 
 /// Alpha-only color type.
 ///
@@ -40,6 +40,7 @@ pub use with_alpha::WithAlpha;
 ///
 /// The layout of this type is always the same as the underlying type `T` (`#[repr(transparent)]`).
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Alpha<T> {
     alpha: T,
@@ -68,7 +69,7 @@ impl<T> Alpha<T> {
     }
 }
 
-impl<T> WithAlpha<T> for Alpha<T>
+impl<T> HasAlpha<T> for Alpha<T>
 where
     T: Copy,
 {
@@ -138,7 +139,23 @@ impl<A, C> AlphaFirst<A, C> {
     }
 }
 
-impl<A, C> WithAlpha<A> for AlphaFirst<A, C>
+#[cfg(feature = "bytemuck")]
+unsafe impl<A, C> bytemuck::Pod for AlphaFirst<A, C>
+where
+    A: bytemuck::Pod,
+    C: bytemuck::Pod,
+{
+}
+
+#[cfg(feature = "bytemuck")]
+unsafe impl<A, C> bytemuck::Zeroable for AlphaFirst<A, C>
+where
+    A: bytemuck::Zeroable,
+    C: bytemuck::Zeroable,
+{
+}
+
+impl<A, C> HasAlpha<A> for AlphaFirst<A, C>
 where
     A: Copy,
 {
@@ -221,7 +238,23 @@ impl<A, C> AlphaLast<A, C> {
     }
 }
 
-impl<A, C> WithAlpha<A> for AlphaLast<A, C>
+#[cfg(feature = "bytemuck")]
+unsafe impl<A, C> bytemuck::Pod for AlphaLast<A, C>
+where
+    A: bytemuck::Pod,
+    C: bytemuck::Pod,
+{
+}
+
+#[cfg(feature = "bytemuck")]
+unsafe impl<A, C> bytemuck::Zeroable for AlphaLast<A, C>
+where
+    A: bytemuck::Zeroable,
+    C: bytemuck::Zeroable,
+{
+}
+
+impl<A, C> HasAlpha<A> for AlphaLast<A, C>
 where
     A: Copy,
 {

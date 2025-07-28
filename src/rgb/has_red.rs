@@ -4,7 +4,7 @@ use crate::scalar::{
 };
 
 /// A trait for types that have a 🔴 red component.
-pub trait WithRed<C> {
+pub trait HasRed<C> {
     /// Creates a new color with the given red component.
     ///
     /// The other components are set to their default values.
@@ -30,9 +30,7 @@ pub trait WithRed<C> {
         Self: Sized + Default,
         C: Intensity + Into<f32>,
     {
-        let mut color = Self::default();
-        color.set_red_normalized_f32(value);
-        color
+        Self::new_red(C::from_normalized_f32(value))
     }
 
     /// Creates a new color with the red component set to the given normalized 64-bit floating point value.

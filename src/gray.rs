@@ -41,8 +41,8 @@
 
 use crate::alpha::AlphaLast;
 
-mod with_gray;
-pub use with_gray::WithGray;
+mod has_gray;
+pub use has_gray::HasGray;
 
 /// Grayscale-only color type.
 ///
@@ -50,6 +50,7 @@ pub use with_gray::WithGray;
 ///
 /// The layout of this type is always the same as the underlying type `T` (`#[repr(transparent)]`).
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Gray<T> {
     gray: T,
@@ -72,7 +73,7 @@ impl<T> Gray<T> {
     }
 }
 
-impl<T> WithGray<T> for Gray<T>
+impl<T> HasGray<T> for Gray<T>
 where
     T: Copy,
 {
@@ -112,7 +113,7 @@ pub type Gray16 = Gray<u16>;
 /// ```
 pub type GrayAlpha<T> = AlphaLast<T, Gray<T>>;
 
-impl<T> WithGray<T> for GrayAlpha<T>
+impl<T> HasGray<T> for GrayAlpha<T>
 where
     T: Copy,
 {

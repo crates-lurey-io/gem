@@ -146,6 +146,15 @@ macro_rules! impl_norm {
         impl Intensity for $name {
             const MIN: Self = Self(0.0);
             const MAX: Self = Self(1.0);
+
+            fn from_normalized_f32(value: f32) -> Self {
+                Self::new_clamped(value.into())
+            }
+
+            #[allow(clippy::cast_possible_truncation)]
+            fn from_normalized_f64(value: f64) -> Self {
+                Self::new_clamped(value as $ty)
+            }
         }
 
         impl Normalized for $name {}

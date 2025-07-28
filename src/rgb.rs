@@ -268,6 +268,18 @@ pub struct Bgr<T> {
     r: T,
 }
 
+impl<T> Bgr<T> {
+    /// Creates a new BGR color with the given blue, green, and red components.
+    #[must_use]
+    pub const fn new(blue: T, green: T, red: T) -> Self {
+        Self {
+            b: blue,
+            g: green,
+            r: red,
+        }
+    }
+}
+
 impl_rgb_with_fields!(Bgr<T>);
 
 /// A 16-bit packed ARGB color representation.
@@ -412,6 +424,14 @@ pub type Bgr888 = Bgr<u8>;
 /// ```
 pub type Abgr8888 = AlphaFirst<u8, Bgr888>;
 
+impl Abgr8888 {
+    /// Creates a new ABGR color from the individual components.
+    #[must_use]
+    pub const fn new(a: u8, b: u8, g: u8, r: u8) -> Self {
+        Self::with_color(a, Bgr::new(b, g, r))
+    }
+}
+
 /// Floating-point RGB color representation.
 ///
 /// Each component is represented by 32 bits (f32).
@@ -442,3 +462,11 @@ pub type Rgbf32 = Rgb<f32>;
 /// }
 /// ```
 pub type Rgbaf32 = AlphaLast<Rgbf32, f32>;
+
+impl Rgbaf32 {
+    /// Creates a new RGBA color from the individual components.
+    #[must_use]
+    pub const fn new(r: f32, g: f32, b: f32, a: f32) -> Self {
+        Self::with_color(Rgbf32::new(r, g, b), a)
+    }
+}

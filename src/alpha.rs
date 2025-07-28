@@ -62,7 +62,7 @@ pub struct AlphaFirst<A, C> {
 impl<A, C> AlphaFirst<A, C> {
     /// Creates a new instance of `AlphaFirst` with the given alpha and color components.
     #[must_use]
-    pub const fn new(alpha: A, color: C) -> Self {
+    pub const fn with_color(alpha: A, color: C) -> Self {
         Self { alpha, color }
     }
 
@@ -132,7 +132,7 @@ pub struct AlphaLast<A, C> {
 impl<A, C> AlphaLast<A, C> {
     /// Creates a new instance of `AlphaFirst` with the given color and alpha components.
     #[must_use]
-    pub const fn new(color: C, alpha: A) -> Self {
+    pub const fn with_color(alpha: A, color: C) -> Self {
         Self { color, alpha }
     }
 
@@ -207,33 +207,33 @@ mod tests {
 
     #[test]
     fn alpha_first_new() {
-        let alpha_first = AlphaFirst::new(128u8, [255, 0, 0]);
+        let alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
         assert_eq!(alpha_first.alpha(), 128);
         assert_eq!(alpha_first.color(), [255, 0, 0]);
     }
 
     #[test]
     fn alpha_first_into_inner() {
-        let alpha_first = AlphaFirst::new(128u8, [255, 0, 0]);
+        let alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
         assert_eq!(alpha_first.into_inner(), (128, [255, 0, 0]));
     }
 
     #[test]
     fn alpha_first_deref_color() {
-        let alpha_first = AlphaFirst::new(128u8, [255, 0, 0]);
+        let alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
         assert_eq!(*alpha_first, [255, 0, 0]);
     }
 
     #[test]
     fn alpha_first_deref_mut_color() {
-        let mut alpha_first = AlphaFirst::new(128u8, [255, 0, 0]);
+        let mut alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
         alpha_first.color = [0, 255, 0];
         assert_eq!(*alpha_first, [0, 255, 0]);
     }
 
     #[test]
     fn alpha_first_repr_c() {
-        let alpha_first = AlphaFirst::new(128u8, [255, 0, 0]);
+        let alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
         let bytes =
             unsafe { core::mem::transmute::<AlphaFirst<u8, [u8; 3]>, [u8; 4]>(alpha_first) };
         assert_eq!(bytes, [128, 255, 0, 0]);
@@ -241,33 +241,33 @@ mod tests {
 
     #[test]
     fn alpha_last_new() {
-        let alpha_last = AlphaLast::new([255, 0, 0], 128u8);
+        let alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
         assert_eq!(alpha_last.alpha(), 128);
         assert_eq!(alpha_last.color(), [255, 0, 0]);
     }
 
     #[test]
     fn alpha_last_into_inner() {
-        let alpha_last = AlphaLast::new([255, 0, 0], 128u8);
+        let alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
         assert_eq!(alpha_last.into_inner(), ([255, 0, 0], 128));
     }
 
     #[test]
     fn alpha_last_deref_color() {
-        let alpha_last = AlphaLast::new([255, 0, 0], 128u8);
+        let alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
         assert_eq!(*alpha_last, [255, 0, 0]);
     }
 
     #[test]
     fn alpha_last_deref_mut_color() {
-        let mut alpha_last = AlphaLast::new([255, 0, 0], 128u8);
+        let mut alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
         alpha_last.color = [0, 255, 0];
         assert_eq!(*alpha_last, [0, 255, 0]);
     }
 
     #[test]
     fn alpha_last_repr_c() {
-        let alpha_last = AlphaLast::new([255, 0, 0], 128u8);
+        let alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
         let bytes = unsafe { core::mem::transmute::<AlphaLast<u8, [u8; 3]>, [u8; 4]>(alpha_last) };
         assert_eq!(bytes, [255, 0, 0, 128]);
     }

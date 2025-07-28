@@ -26,7 +26,11 @@
 //! let red = Rgbaf32::new(1.0, 0.0, 0.0, 0.5);
 //! ```
 
-pub use crate::rgb::{
-    Abgr8888, HasBlue as _, HasGreen as _, HasRed as _, Rgb888, RgbColor as _, Rgbaf32, Rgbf32,
-};
 pub use crate::scalar::normalize::{Normalize as _, Normalized as _};
+pub use crate::{
+    alpha::HasAlpha as _,
+    gray::HasGray as _,
+    rgb::{
+        Abgr8888, HasBlue as _, HasGreen as _, HasRed as _, Rgb888, RgbColor as _, Rgbaf32, Rgbf32,
+    },
+};

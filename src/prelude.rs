@@ -1,4 +1,4 @@
-//! Common types and traits for introductory use of the `gem` crate.
+//! Common types and traits for introductory use.
 //!
 //! ## Examples
 //!

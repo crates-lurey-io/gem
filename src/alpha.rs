@@ -1,3 +1,34 @@
+//! Color types with alpha channel support.
+//!
+//! This module contains:
+//!
+//! - Traits that work on all Alpha channel data types
+//! - Generic types that can be used to define Alpha channel data types
+//! - Concrete types that define common Alpha channel data types
+//!
+//! ## Getting Started
+//!
+//! ```rust
+//! use gem::alpha::Alpha8;
+//!
+//! // 8-bit alpha-only color
+//! let alpha = Alpha8::new(128);
+//! ```
+//!
+//! ## Predefined Types
+//!
+//! Type          | Bits per pixel | Description
+//! ------------- | -------------- | -----------
+//! [`Alpha8`]    | 8              | 8-bit alpha-only color
+//!
+//! ## Generic Types
+//!
+//! Structs with generic types allow easily creating custom Alpha channel types:
+//!
+//! - [`Alpha<T>`]; a generic Alpha channel representation with a single component
+//! - [`AlphaFirst<A, C>`]; a generic Alpha channel representation with alpha first,
+//! - [`AlphaLast<A, C>`]; a generic Alpha channel representation with alpha last
+
 use core::ops::{Deref, DerefMut};
 
 /// Alpha-only color type.

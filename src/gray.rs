@@ -15,14 +15,14 @@ pub struct Gray<T> {
 ///
 /// ## Layout
 ///
-/// This type has the same layout as `u8`.
+/// This type has the same layout as [`u8`].
 pub type Gray8 = Gray<u8>;
 
 /// 16-bit grayscale-only color type.
 ///
 /// ## Layout
 ///
-/// This type has the same layout as `u16`.
+/// This type has the same layout as [`u16`].
 pub type Gray16 = Gray<u16>;
 
 /// Combined grayscale and alpha color type.
@@ -62,9 +62,9 @@ pub type GrayAlpha8 = GrayAlpha<Gray8>;
 /// ```
 pub type GrayAlpha16 = GrayAlpha<Gray16>;
 
-/// Floating-point grayscale color type.
+/// 32-bit floating-point grayscale color type.
 ///
 /// ## Layout
 ///
-/// This type has the same layout as `f32`.
+/// This type has the same layout as [`f32`].
 pub type GrayF32 = Gray<f32>;

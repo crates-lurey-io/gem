@@ -1,7 +1,5 @@
 use core::ops::{Deref, DerefMut};
 
-use crate::internal::scalar::Scalar;
-
 /// Alpha-only color type.
 ///
 /// ## Layout
@@ -9,17 +7,11 @@ use crate::internal::scalar::Scalar;
 /// The layout of this type is always the same as the underlying type `T` (`#[repr(transparent)]`).
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
-pub struct Alpha<T>
-where
-    T: Scalar,
-{
+pub struct Alpha<T> {
     alpha: T,
 }
 
-impl<T> Alpha<T>
-where
-    T: Scalar,
-{
+impl<T> Alpha<T> {
     /// Creates a new instance of `Alpha` with the given alpha value.
     #[must_use]
     pub const fn new(alpha: T) -> Self {
@@ -28,7 +20,10 @@ where
 
     /// Returns the alpha value of this color.
     #[must_use]
-    pub const fn alpha(&self) -> T {
+    pub const fn alpha(&self) -> T
+    where
+        T: Copy,
+    {
         self.alpha
     }
 
@@ -59,19 +54,12 @@ pub type Alpha8 = Alpha<u8>;
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(C)]
-pub struct AlphaFirst<A, C>
-where
-    A: Scalar,
-{
+pub struct AlphaFirst<A, C> {
     alpha: A,
     color: C,
 }
 
-impl<A, C> AlphaFirst<A, C>
-where
-    A: Scalar,
-    C: Copy,
-{
+impl<A, C> AlphaFirst<A, C> {
     /// Creates a new instance of `AlphaFirst` with the given alpha and color components.
     #[must_use]
     pub const fn new(alpha: A, color: C) -> Self {
@@ -80,13 +68,19 @@ where
 
     /// Returns the alpha component of this color.
     #[must_use]
-    pub const fn alpha(&self) -> A {
+    pub const fn alpha(&self) -> A
+    where
+        A: Copy,
+    {
         self.alpha
     }
 
     /// Returns the color component of this color.
     #[must_use]
-    pub const fn color(&self) -> C {
+    pub const fn color(&self) -> C
+    where
+        C: Copy,
+    {
         self.color
     }
 
@@ -99,7 +93,6 @@ where
 
 impl<A, C> Deref for AlphaFirst<A, C>
 where
-    A: Scalar,
     C: Copy,
 {
     type Target = C;
@@ -111,7 +104,6 @@ where
 
 impl<A, C> DerefMut for AlphaFirst<A, C>
 where
-    A: Scalar,
     C: Copy,
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
@@ -137,11 +129,7 @@ pub struct AlphaLast<A, C> {
     alpha: A,
 }
 
-impl<A, C> AlphaLast<A, C>
-where
-    A: Scalar,
-    C: Copy,
-{
+impl<A, C> AlphaLast<A, C> {
     /// Creates a new instance of `AlphaFirst` with the given color and alpha components.
     #[must_use]
     pub const fn new(color: C, alpha: A) -> Self {
@@ -150,13 +138,19 @@ where
 
     /// Returns the alpha component of this color.
     #[must_use]
-    pub const fn alpha(&self) -> A {
+    pub const fn alpha(&self) -> A
+    where
+        A: Copy,
+    {
         self.alpha
     }
 
     /// Returns the color component of this color.
     #[must_use]
-    pub const fn color(&self) -> C {
+    pub const fn color(&self) -> C
+    where
+        C: Copy,
+    {
         self.color
     }
 
@@ -167,11 +161,7 @@ where
     }
 }
 
-impl<A, C> Deref for AlphaLast<A, C>
-where
-    A: Scalar,
-    C: Copy,
-{
+impl<A, C> Deref for AlphaLast<A, C> {
     type Target = C;
 
     fn deref(&self) -> &Self::Target {
@@ -179,11 +169,7 @@ where
     }
 }
 
-impl<A, C> DerefMut for AlphaLast<A, C>
-where
-    A: Scalar,
-    C: Copy,
-{
+impl<A, C> DerefMut for AlphaLast<A, C> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.color
     }

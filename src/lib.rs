@@ -6,4 +6,7 @@ pub mod alpha;
 pub mod gray;
 pub mod rgb;
 
-pub(crate) mod internal;
+#[cfg(not(feature = "unstable-scalar"))]
+pub(crate) mod scalar;
+#[cfg(feature = "unstable-scalar")]
+pub mod scalar;

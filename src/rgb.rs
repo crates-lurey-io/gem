@@ -1,9 +1,6 @@
 //! Color representations that contain red, green, and blue components.
 
-use crate::{
-    alpha::{AlphaFirst, AlphaLast},
-    internal::scalar::Scalar,
-};
+use crate::alpha::{AlphaFirst, AlphaLast};
 
 /// A color representation that contains red, green, and blue components.
 ///
@@ -19,10 +16,7 @@ use crate::{
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(C)]
-pub struct Rgb<T>
-where
-    T: Scalar,
-{
+pub struct Rgb<T> {
     r: T,
     g: T,
     b: T,

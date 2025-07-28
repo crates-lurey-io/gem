@@ -5,7 +5,7 @@ license = "MIT"
 
 description = "Color representations and conversions"
 repository = "https://github.com/crates-lurey-io/gem"
-version = "0.1.0"
+version = "0.1.0-alpha.1"
 
 [lints.clippy]
 pedantic = "deny"

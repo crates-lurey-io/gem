@@ -84,6 +84,7 @@ pub trait WithBlue<C> {
     /// Sets the blue component based on the normalized 32-bit floating point value.
     ///
     /// The number is clamped to the range [0.0, 1.0] before conversion.
+    #[cfg(any(feature = "std", feature = "libm"))]
     fn set_blue_normalized_f32(&mut self, value: f32)
     where
         C: Intensity + Into<f32>,
@@ -94,6 +95,7 @@ pub trait WithBlue<C> {
     /// Sets the blue component based on the normalized 64-bit floating point value.
     ///
     /// The number is clamped to the range [0.0, 1.0] before conversion.
+    #[cfg(any(feature = "std", feature = "libm"))]
     fn set_blue_normalized_f64(&mut self, value: f64)
     where
         C: Intensity + Into<f64>,

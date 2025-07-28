@@ -1,4 +1,26 @@
 //! Color representations and conversions.
+//!
+//! ## Features
+//!
+//! By default, this crate uses `#![no_std]` and does not depend on the standard library.
+//!
+//! At least one `libm` or `std` feature must be enabled to use floating-point operations.
+//!
+//! ### `libm`
+//!
+//! _Enabled by default._
+//!
+//! This feature enables the use of the `libm` crate for mathematical operations.
+//!
+//! ### `libm-arch`
+//!
+//! _Enabled by default._
+//!
+//! This feature enables architecture-specific optimizations for the `libm` crate.
+//!
+//! ### `std`
+//!
+//! Uses the standard library instead of `libm` for mathematical operations.
 
 #![no_std]
 

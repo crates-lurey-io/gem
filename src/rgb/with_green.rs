@@ -23,6 +23,7 @@ pub trait WithGreen<C> {
     /// The number is clamped to the range [0.0, 1.0] before conversion.
     ///
     /// The other components are set to their default values.
+    #[cfg(any(feature = "std", feature = "libm"))]
     #[must_use]
     fn new_green_normalized_f32(value: f32) -> Self
     where
@@ -39,6 +40,7 @@ pub trait WithGreen<C> {
     /// The number is clamped to the range [0.0, 1.0] before conversion.
     ///
     /// The other components are set to their default values.
+    #[cfg(any(feature = "std", feature = "libm"))]
     #[must_use]
     fn new_green_normalized_f64(value: f64) -> Self
     where
@@ -84,6 +86,7 @@ pub trait WithGreen<C> {
     /// Sets the green component based on the normalized 32-bit floating point value.
     ///
     /// The number is clamped to the range [0.0, 1.0] before conversion.
+    #[cfg(any(feature = "std", feature = "libm"))]
     fn set_green_normalized_f32(&mut self, value: f32)
     where
         C: Intensity + Into<f32>,
@@ -94,6 +97,7 @@ pub trait WithGreen<C> {
     /// Sets the green component based on the normalized 64-bit floating point value.
     ///
     /// The number is clamped to the range [0.0, 1.0] before conversion.
+    #[cfg(any(feature = "std", feature = "libm"))]
     fn set_green_normalized_f64(&mut self, value: f64)
     where
         C: Intensity + Into<f64>,

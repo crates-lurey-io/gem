@@ -1,4 +1,4 @@
-//! Color types with alpha channel support.
+//! Color types with 🧊 alpha channel support.
 //!
 //! This module contains:
 //!

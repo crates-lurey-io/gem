@@ -1,8 +1,5 @@
 //! Helper crate for crate-dependent math operations.
 
-#[cfg(not(any(feature = "std", feature = "libm")))]
-compile_error!("This module requires either the `std` or `libm` feature to be enabled.");
-
 #[cfg(not(feature = "std"))]
 mod impl_libm;
 

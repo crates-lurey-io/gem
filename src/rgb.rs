@@ -98,6 +98,7 @@ pub trait RgbColor<T> {
     /// Creates a new color with the given normalized 32-bit floating point red, green, and blue components.
     ///
     /// The numbers are clamped to the range [0.0, 1.0] before conversion.
+    #[cfg(any(feature = "std", feature = "libm"))]
     #[must_use]
     fn from_rgb_normalized_f32(red: f32, green: f32, blue: f32) -> Self
     where
@@ -113,6 +114,7 @@ pub trait RgbColor<T> {
     /// Creates a new color with the given normalized 64-bit floating point red, green, and blue components.
     ///
     /// The numbers are clamped to the range [0.0, 1.0] before conversion.
+    #[cfg(any(feature = "std", feature = "libm"))]
     #[must_use]
     fn from_rgb_normalized_f64(red: f64, green: f64, blue: f64) -> Self
     where

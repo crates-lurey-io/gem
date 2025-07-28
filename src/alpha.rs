@@ -31,6 +31,9 @@
 
 use core::ops::{Deref, DerefMut};
 
+mod with_alpha;
+pub use with_alpha::WithAlpha;
+
 /// Alpha-only color type.
 ///
 /// ## Layout
@@ -62,6 +65,19 @@ impl<T> Alpha<T> {
     #[must_use]
     pub fn into_inner(self) -> T {
         self.alpha
+    }
+}
+
+impl<T> WithAlpha<T> for Alpha<T>
+where
+    T: Copy,
+{
+    fn alpha(&self) -> T {
+        self.alpha
+    }
+
+    fn set_alpha(&mut self, value: T) {
+        self.alpha = value;
     }
 }
 
@@ -119,6 +135,19 @@ impl<A, C> AlphaFirst<A, C> {
     #[must_use]
     pub fn into_inner(self) -> (A, C) {
         (self.alpha, self.color)
+    }
+}
+
+impl<A, C> WithAlpha<A> for AlphaFirst<A, C>
+where
+    A: Copy,
+{
+    fn alpha(&self) -> A {
+        self.alpha
+    }
+
+    fn set_alpha(&mut self, value: A) {
+        self.alpha = value;
     }
 }
 
@@ -189,6 +218,19 @@ impl<A, C> AlphaLast<A, C> {
     #[must_use]
     pub fn into_inner(self) -> (C, A) {
         (self.color, self.alpha)
+    }
+}
+
+impl<A, C> WithAlpha<A> for AlphaLast<A, C>
+where
+    A: Copy,
+{
+    fn alpha(&self) -> A {
+        self.alpha
+    }
+
+    fn set_alpha(&mut self, value: A) {
+        self.alpha = value;
     }
 }
 

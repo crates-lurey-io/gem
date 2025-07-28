@@ -41,6 +41,9 @@
 
 use crate::alpha::AlphaLast;
 
+mod with_gray;
+pub use with_gray::WithGray;
+
 /// Grayscale-only color type.
 ///
 /// ## Layout
@@ -66,6 +69,19 @@ impl<T> Gray<T> {
         T: Copy,
     {
         self.gray
+    }
+}
+
+impl<T> WithGray<T> for Gray<T>
+where
+    T: Copy,
+{
+    fn gray(&self) -> T {
+        self.gray
+    }
+
+    fn set_gray(&mut self, value: T) {
+        self.gray = value;
     }
 }
 
@@ -95,6 +111,20 @@ pub type Gray16 = Gray<u16>;
 /// }
 /// ```
 pub type GrayAlpha<T> = AlphaLast<T, Gray<T>>;
+
+impl<T> WithGray<T> for GrayAlpha<T>
+where
+    T: Copy,
+{
+    fn gray(&self) -> T {
+        self.color().gray()
+    }
+
+    fn set_gray(&mut self, value: T) {
+        let color = &mut **self;
+        color.set_gray(value);
+    }
+}
 
 /// 16-bit grayscale and alpha color type.
 ///

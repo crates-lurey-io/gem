@@ -1,9 +1,9 @@
 //! Helper crate for crate-dependent math operations.
 
-#[cfg(not(feature = "std"))]
+#[cfg(all(not(feature = "std"), feature = "libm"))]
 mod impl_libm;
 
-#[cfg(not(feature = "std"))]
+#[cfg(all(not(feature = "std"), feature = "libm"))]
 use impl_libm as impls;
 
 #[cfg(feature = "std")]

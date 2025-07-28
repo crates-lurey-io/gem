@@ -51,7 +51,7 @@
 //! For additional types to store alpha channels (such as [`AlphaFirst`]), see [`crate::alpha`].
 
 use crate::{
-    alpha::{AlphaFirst, AlphaLast},
+    alpha::{AlphaFirst, AlphaLast, WithAlpha},
     scalar::intensity::Intensity,
 };
 
@@ -216,6 +216,21 @@ macro_rules! impl_rgb_packed {
     };
 }
 
+macro_rules! impl_with_alpha_packed {
+    ($ty:ident, $alpha_shift:expr, $alpha_mask:expr, $alpha_clear:expr) => {
+        impl WithAlpha<u8> for $ty {
+            fn alpha(&self) -> u8 {
+                ((self.packed >> $alpha_shift) & $alpha_mask) as u8
+            }
+
+            fn set_alpha(&mut self, value: u8) {
+                self.packed = (self.packed & $alpha_clear)
+                    | ((u16::from(value) & $alpha_mask) << $alpha_shift);
+            }
+        }
+    };
+}
+
 /// A color representation that contains red, green, and blue components.
 ///
 /// ## Layout
@@ -316,6 +331,8 @@ impl_rgb_packed!(
     blue:  { shift: 0, mask: 0x0F, clear: 0xFFF0 }
 );
 
+impl_with_alpha_packed!(Argb4444, 12, 0x0F, 0x0FFF);
+
 /// A 16-bit packed ARGB color representation.
 ///
 /// Each component is represented by 1 bit for alpha, and 4 bits each for red, green, and blue.
@@ -339,6 +356,8 @@ impl_rgb_packed!(
     green: { shift: 5, mask: 0x1F, clear: 0xFF9F },
     blue:  { shift: 0, mask: 0x1F, clear: 0xFFE0 }
 );
+
+impl_with_alpha_packed!(Argb1555, 15, 0x01, 0x7FFF);
 
 /// A 16-bit packed RGB color representation.
 ///

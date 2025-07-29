@@ -8,10 +8,10 @@
 //! use gem::prelude::*;
 //!
 //! // 8-bit RGB color
-//! let red = Rgb888::new(255, 0, 0);
+//! let red = Rgb888::from_rgb(255, 0, 0);
 //!
 //! // 32-bit floating point RGB color
-//! let red = Rgbf32::new(1.0, 0.0, 0.0);
+//! let red = Rgbf32::from_rgb(1.0, 0.0, 0.0);
 //! ```
 //!
 //! Or, with an alpha channel:
@@ -20,10 +20,10 @@
 //! use gem::prelude::*;
 //!
 //! // 8-bit ARGB color, 50% transparent
-//! let red = Abgr8888::new(128, 255, 0, 0);
+//! let red = Abgr8888::from_abgr(128, 255, 0, 0);
 //!
 //! // 32-bit floating point RGB color with alpha, 50% transparent
-//! let red = Rgbaf32::new(1.0, 0.0, 0.0, 0.5);
+//! let red = Rgbaf32::from_rgba(1.0, 0.0, 0.0, 0.5);
 //! ```
 
 pub use crate::{

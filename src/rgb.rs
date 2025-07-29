@@ -15,7 +15,7 @@
 //! use gem::rgb::Abgr8888;
 //!
 //! // 8-bit ARGB color, with alpha first.
-//! let red = Abgr8888::new(128, 0, 0, 255);
+//! let red = Abgr8888::from_abgr(128, 0, 0, 255);
 //! ```
 //!
 //! ## Predefined Types
@@ -45,7 +45,7 @@
 //! ```rust
 //! use gem::rgb::Rgb;
 //!
-//! let red: Rgb<u16> = Rgb::new(65535, 0, 0);
+//! let red: Rgb<u16> = Rgb::from_rgb(65535, 0, 0);
 //! ```
 //!
 //! For additional types to store alpha channels (such as [`AlphaFirst`][]), see [`crate::alpha`].

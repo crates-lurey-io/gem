@@ -12,9 +12,9 @@ pub trait RgbaColor: Sized + Default + HasRed + HasGreen + HasBlue + HasAlpha {
     ///
     /// This method is provided as a convenience to create _any_ [`RgbaColor`] type; most types will
     /// have their own dedicated constructor methods that may be more efficient and specific. For
-    /// example [`Abgr8888::from_rgba`][], [`Rgbaf32::from_rgba`][], etc.
+    /// example [`Abgr8888::from_abgr`][], [`Rgbaf32::from_rgba`][], etc.
     ///
-    /// [`Abgr8888::from_rgba`]: crate::rgb::Abgr8888::from_rgba
+    /// [`Abgr8888::from_abgr`]: crate::rgb::Abgr8888::from_abgr
     /// [`Rgbaf32::from_rgba`]: crate::rgb::Rgbaf32::from_rgba
     #[must_use]
     fn from_rgba(

@@ -15,7 +15,7 @@ use crate::internal::{Sealed, math};
 mod intensity;
 pub use intensity::Intensity;
 
-/// Types that can be converted to normalized (floating-point) and scaled (integer) representations.
+/// Types that can be converted to normalized and scaled representations.
 ///
 /// Integer types (`u8`, `u16`) are treated as intensities, while floating-point types (`f32`,
 /// `f64`) are treated as normalized.

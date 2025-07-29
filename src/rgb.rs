@@ -30,6 +30,7 @@
 //! [`Argb8888`] | 32             | 8 bits each for alpha, red, green, blue
 //! [`Bgr888`]   | 24 (32 padded) | 8 bits each for RGB, 8 bits padding in memory
 //! [`Rgb565`]   | 16             | 5 bits for red, 6 bits for green, 5 bits for blue
+//! [`Rgb888`]   | 24 (32 padded) | 8 bits each for red, green, blue, 8 bits padding in memory
 //! [`Rgbaf32`]  | 128            | 32 bits each for red, green, blue, alpha
 //! [`Rgbf32`]   | 96             | 32 bits each for red, green, blue
 //!

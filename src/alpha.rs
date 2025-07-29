@@ -89,7 +89,7 @@ where
 /// This type has the same layout as `u8`.
 pub type Alpha8 = Alpha<u8>;
 
-/// A contingous representation of a color with alpha first, followed by other color components.
+/// A contingous color with alpha first, followed by other color components.
 ///
 /// ## Layout
 ///
@@ -188,7 +188,7 @@ where
     }
 }
 
-/// A contingous representation of a color with alpha last, preceded by other color components.
+/// A contiguous color with alpha last, preceded by other color components.
 ///
 /// ## Layout
 ///

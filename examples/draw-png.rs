@@ -7,13 +7,13 @@ use gem::prelude::*;
 fn main() {
     let temp_dir = std::env::temp_dir();
     let file_path = temp_dir.join("red_box.png");
-    let mut red_box_50x50 = vec![Abgr8888::new_red(0xFF); 50 * 50];
+    let mut red_box_50x50 = vec![Abgr8888::from_abgr(0xFF, 0x00, 0x00, 0xFF); 50 * 50];
 
     // Make a semi-transparent blue box in the middle of the image
     for y in 0..50 {
         for x in 0..50 {
             if (10..40).contains(&x) && (10..40).contains(&y) {
-                red_box_50x50[y * 50 + x] = Abgr8888::new(128, 0, 255, 128);
+                red_box_50x50[y * 50 + x] = Abgr8888::from_abgr(0x7F, 0x7F, 0, 0xFF);
             }
         }
     }

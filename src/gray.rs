@@ -193,3 +193,32 @@ impl GrayAlphaF32 {
         Self::with_color(alpha, Gray::new(gray))
     }
 }
+
+#[cfg(test)]
+#[allow(clippy::float_cmp)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn gray8_trait_accessors() {
+        let mut gray = Gray8::new(128);
+        assert_eq!(HasGray::<u8>::gray(&gray), 128);
+
+        HasGray::<u8>::set_gray(&mut gray, 200);
+        assert_eq!(HasGray::<u8>::gray(&gray), 200);
+    }
+
+    #[test]
+    fn gray_alpha16_new() {
+        let gray_alpha = GrayAlpha16::new(128, 255);
+        assert_eq!(gray_alpha.gray(), 128);
+        assert_eq!(gray_alpha.alpha(), 255);
+    }
+
+    #[test]
+    fn gray_alphaf32_new() {
+        let gray_alpha = GrayAlphaF32::new(128.0, 255.0);
+        assert_eq!(gray_alpha.gray(), 128.0);
+        assert_eq!(gray_alpha.alpha(), 255.0);
+    }
+}

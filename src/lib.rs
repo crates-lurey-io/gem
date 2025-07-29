@@ -4,8 +4,6 @@
 //!
 //! By default, this crate uses `#![no_std]` and does not depend on the standard library.
 //!
-//! At least one `libm` or `std` feature must be enabled to use floating-point operations.
-//!
 //! ### `bytemuck`
 //!
 //! Derives `bytemuck::Zeroable` and `bytemuck::Pod` for color types.
@@ -15,6 +13,9 @@
 //! _Enabled by default._
 //!
 //! This feature enables the use of the `libm` crate for mathematical operations.
+//!
+//! - If both `libm` and `std` features are enabled, `std` will be used for math operations.
+//! - If neither `libm` nor `std` is enabled, a fallback implementation will be used.
 //!
 //! ### `libm-arch`
 //!
@@ -26,13 +27,8 @@
 //!
 //! Uses the standard library instead of `libm` for mathematical operations.
 //!
-//! ## Unstable Features
-//!
-//! ### `unstable-scalar`
-//!
-//! Enables the use of unstable scalar types for color representations.
-//!
-//! This feature is not recommended for production use as it may change in future versions.
+//! - If both `libm` and `std` features are enabled, `std` will be used for math operations.
+//! - If neither `libm` nor `std` is enabled, a fallback implementation will be used.
 
 #![no_std]
 
@@ -40,10 +36,6 @@ pub mod alpha;
 pub mod gray;
 pub mod prelude;
 pub mod rgb;
-
-#[cfg(not(feature = "unstable-scalar"))]
-pub(crate) mod scalar;
-#[cfg(feature = "unstable-scalar")]
 pub mod scalar;
 
-pub(crate) mod math;
+pub(crate) mod internal;

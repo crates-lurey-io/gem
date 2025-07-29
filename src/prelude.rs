@@ -26,7 +26,6 @@
 //! let red = Rgbaf32::new(1.0, 0.0, 0.0, 0.5);
 //! ```
 
-pub use crate::scalar::normalize::{Normalize as _, Normalized as _};
 pub use crate::{
     alpha::HasAlpha as _,
     gray::HasGray as _,

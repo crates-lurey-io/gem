@@ -299,6 +299,15 @@ mod tests {
     }
 
     #[test]
+    fn alpha_alpha_trait_accessors() {
+        let mut alpha = Alpha::new(128u8);
+        assert_eq!(HasAlpha::<u8>::alpha(&alpha), 128);
+
+        HasAlpha::<u8>::set_alpha(&mut alpha, 200);
+        assert_eq!(HasAlpha::<u8>::alpha(&alpha), 200);
+    }
+
+    #[test]
     fn alpha_into_inner() {
         let alpha = Alpha::new(255u8);
         assert_eq!(alpha.into_inner(), 255);
@@ -333,7 +342,7 @@ mod tests {
     #[test]
     fn alpha_first_deref_mut_color() {
         let mut alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
-        alpha_first.color = [0, 255, 0];
+        *alpha_first = [0, 255, 0];
         assert_eq!(*alpha_first, [0, 255, 0]);
     }
 
@@ -343,6 +352,15 @@ mod tests {
         let bytes =
             unsafe { core::mem::transmute::<AlphaFirst<u8, [u8; 3]>, [u8; 4]>(alpha_first) };
         assert_eq!(bytes, [128, 255, 0, 0]);
+    }
+
+    #[test]
+    fn alpha_first_trait_accessors() {
+        let mut alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
+        assert_eq!(HasAlpha::<u8>::alpha(&alpha_first), 128);
+
+        HasAlpha::<u8>::set_alpha(&mut alpha_first, 200);
+        assert_eq!(HasAlpha::<u8>::alpha(&alpha_first), 200);
     }
 
     #[test]
@@ -367,7 +385,7 @@ mod tests {
     #[test]
     fn alpha_last_deref_mut_color() {
         let mut alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
-        alpha_last.color = [0, 255, 0];
+        *alpha_last = [0, 255, 0];
         assert_eq!(*alpha_last, [0, 255, 0]);
     }
 
@@ -376,5 +394,14 @@ mod tests {
         let alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
         let bytes = unsafe { core::mem::transmute::<AlphaLast<u8, [u8; 3]>, [u8; 4]>(alpha_last) };
         assert_eq!(bytes, [255, 0, 0, 128]);
+    }
+
+    #[test]
+    fn alpha_last_trait_accessors() {
+        let mut alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
+        assert_eq!(HasAlpha::<u8>::alpha(&alpha_last), 128);
+
+        HasAlpha::<u8>::set_alpha(&mut alpha_last, 200);
+        assert_eq!(HasAlpha::<u8>::alpha(&alpha_last), 200);
     }
 }

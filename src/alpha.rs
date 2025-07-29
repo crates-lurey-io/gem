@@ -29,8 +29,6 @@
 //! - [`AlphaFirst<A, C>`]; a generic Alpha channel representation with alpha first,
 //! - [`AlphaLast<A, C>`]; a generic Alpha channel representation with alpha last
 
-use core::ops::{Deref, DerefMut};
-
 mod has_alpha;
 pub use has_alpha::HasAlpha;
 
@@ -69,15 +67,17 @@ impl<T> Alpha<T> {
     }
 }
 
-impl<T> HasAlpha<T> for Alpha<T>
+impl<T> HasAlpha for Alpha<T>
 where
     T: Copy,
 {
-    fn alpha(&self) -> T {
+    type Component = T;
+
+    fn alpha(&self) -> Self::Component {
         self.alpha
     }
 
-    fn set_alpha(&mut self, value: T) {
+    fn set_alpha(&mut self, value: Self::Component) {
         self.alpha = value;
     }
 }
@@ -155,36 +155,18 @@ where
 {
 }
 
-impl<A, C> HasAlpha<A> for AlphaFirst<A, C>
+impl<A, C> HasAlpha for AlphaFirst<A, C>
 where
     A: Copy,
 {
-    fn alpha(&self) -> A {
+    type Component = A;
+
+    fn alpha(&self) -> Self::Component {
         self.alpha
     }
 
-    fn set_alpha(&mut self, value: A) {
+    fn set_alpha(&mut self, value: Self::Component) {
         self.alpha = value;
-    }
-}
-
-impl<A, C> Deref for AlphaFirst<A, C>
-where
-    C: Copy,
-{
-    type Target = C;
-
-    fn deref(&self) -> &Self::Target {
-        &self.color
-    }
-}
-
-impl<A, C> DerefMut for AlphaFirst<A, C>
-where
-    C: Copy,
-{
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.color
     }
 }
 
@@ -254,30 +236,18 @@ where
 {
 }
 
-impl<A, C> HasAlpha<A> for AlphaLast<A, C>
+impl<A, C> HasAlpha for AlphaLast<A, C>
 where
     A: Copy,
 {
-    fn alpha(&self) -> A {
+    type Component = A;
+
+    fn alpha(&self) -> Self::Component {
         self.alpha
     }
 
-    fn set_alpha(&mut self, value: A) {
+    fn set_alpha(&mut self, value: Self::Component) {
         self.alpha = value;
-    }
-}
-
-impl<A, C> Deref for AlphaLast<A, C> {
-    type Target = C;
-
-    fn deref(&self) -> &Self::Target {
-        &self.color
-    }
-}
-
-impl<A, C> DerefMut for AlphaLast<A, C> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.color
     }
 }
 
@@ -301,10 +271,10 @@ mod tests {
     #[test]
     fn alpha_alpha_trait_accessors() {
         let mut alpha = Alpha::new(128u8);
-        assert_eq!(HasAlpha::<u8>::alpha(&alpha), 128);
+        assert_eq!(HasAlpha::alpha(&alpha), 128);
 
-        HasAlpha::<u8>::set_alpha(&mut alpha, 200);
-        assert_eq!(HasAlpha::<u8>::alpha(&alpha), 200);
+        HasAlpha::set_alpha(&mut alpha, 200);
+        assert_eq!(HasAlpha::alpha(&alpha), 200);
     }
 
     #[test]
@@ -334,19 +304,6 @@ mod tests {
     }
 
     #[test]
-    fn alpha_first_deref_color() {
-        let alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
-        assert_eq!(*alpha_first, [255, 0, 0]);
-    }
-
-    #[test]
-    fn alpha_first_deref_mut_color() {
-        let mut alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
-        *alpha_first = [0, 255, 0];
-        assert_eq!(*alpha_first, [0, 255, 0]);
-    }
-
-    #[test]
     fn alpha_first_repr_c() {
         let alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
         let bytes =
@@ -357,10 +314,10 @@ mod tests {
     #[test]
     fn alpha_first_trait_accessors() {
         let mut alpha_first = AlphaFirst::with_color(128u8, [255, 0, 0]);
-        assert_eq!(HasAlpha::<u8>::alpha(&alpha_first), 128);
+        assert_eq!(HasAlpha::alpha(&alpha_first), 128);
 
-        HasAlpha::<u8>::set_alpha(&mut alpha_first, 200);
-        assert_eq!(HasAlpha::<u8>::alpha(&alpha_first), 200);
+        HasAlpha::set_alpha(&mut alpha_first, 200);
+        assert_eq!(HasAlpha::alpha(&alpha_first), 200);
     }
 
     #[test]
@@ -377,19 +334,6 @@ mod tests {
     }
 
     #[test]
-    fn alpha_last_deref_color() {
-        let alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
-        assert_eq!(*alpha_last, [255, 0, 0]);
-    }
-
-    #[test]
-    fn alpha_last_deref_mut_color() {
-        let mut alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
-        *alpha_last = [0, 255, 0];
-        assert_eq!(*alpha_last, [0, 255, 0]);
-    }
-
-    #[test]
     fn alpha_last_repr_c() {
         let alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
         let bytes = unsafe { core::mem::transmute::<AlphaLast<u8, [u8; 3]>, [u8; 4]>(alpha_last) };
@@ -399,9 +343,9 @@ mod tests {
     #[test]
     fn alpha_last_trait_accessors() {
         let mut alpha_last = AlphaLast::with_color(128u8, [255, 0, 0]);
-        assert_eq!(HasAlpha::<u8>::alpha(&alpha_last), 128);
+        assert_eq!(HasAlpha::alpha(&alpha_last), 128);
 
-        HasAlpha::<u8>::set_alpha(&mut alpha_last, 200);
-        assert_eq!(HasAlpha::<u8>::alpha(&alpha_last), 200);
+        HasAlpha::set_alpha(&mut alpha_last, 200);
+        assert_eq!(HasAlpha::alpha(&alpha_last), 200);
     }
 }

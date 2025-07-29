@@ -73,15 +73,17 @@ impl<T> Gray<T> {
     }
 }
 
-impl<T> HasGray<T> for Gray<T>
+impl<T> HasGray for Gray<T>
 where
     T: Copy,
 {
-    fn gray(&self) -> T {
+    type Component = T;
+
+    fn gray(&self) -> Self::Component {
         self.gray
     }
 
-    fn set_gray(&mut self, value: T) {
+    fn set_gray(&mut self, value: Self::Component) {
         self.gray = value;
     }
 }
@@ -113,17 +115,18 @@ pub type Gray16 = Gray<u16>;
 /// ```
 pub type GrayAlpha<T> = AlphaLast<T, Gray<T>>;
 
-impl<T> HasGray<T> for GrayAlpha<T>
+impl<T> HasGray for GrayAlpha<T>
 where
     T: Copy,
 {
-    fn gray(&self) -> T {
+    type Component = T;
+
+    fn gray(&self) -> Self::Component {
         self.color().gray()
     }
 
-    fn set_gray(&mut self, value: T) {
-        let color = &mut **self;
-        color.set_gray(value);
+    fn set_gray(&mut self, value: Self::Component) {
+        *self = GrayAlpha::with_color(self.alpha(), self.color().with_gray(value));
     }
 }
 
@@ -202,10 +205,10 @@ mod tests {
     #[test]
     fn gray8_trait_accessors() {
         let mut gray = Gray8::new(128);
-        assert_eq!(HasGray::<u8>::gray(&gray), 128);
+        assert_eq!(HasGray::gray(&gray), 128);
 
-        HasGray::<u8>::set_gray(&mut gray, 200);
-        assert_eq!(HasGray::<u8>::gray(&gray), 200);
+        HasGray::set_gray(&mut gray, 200);
+        assert_eq!(HasGray::gray(&gray), 200);
     }
 
     #[test]

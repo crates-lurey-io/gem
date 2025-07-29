@@ -1,19 +1,22 @@
 /// A trait for types that have a 🔵 blue component.
-pub trait HasBlue<C> {
+pub trait HasBlue {
+    /// The type of the blue component.
+    type Component;
+
     /// Returns the value of the blue component.
     #[must_use]
-    fn blue(&self) -> C;
+    fn blue(&self) -> Self::Component;
 
     /// Sets the blue component to the given value.
     ///
     /// If the color has other components, they are left unchanged.
-    fn set_blue(&mut self, value: C);
+    fn set_blue(&mut self, value: Self::Component);
 
     /// Converts the color into a new type with the blue component set to the given value.
     ///
     /// The other components are left unchanged.
     #[must_use]
-    fn with_blue(self, value: C) -> Self
+    fn with_blue(self, value: Self::Component) -> Self
     where
         Self: Copy + Clone,
     {

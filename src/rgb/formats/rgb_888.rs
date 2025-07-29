@@ -11,6 +11,7 @@ use crate::rgb::Rgb;
 ///   uint8_t r;
 ///   uint8_t g;
 ///   uint8_t b;
+///   // Padding: 8 bits
 /// }
 /// ```
 ///

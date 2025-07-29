@@ -46,6 +46,9 @@ impl Argb4444 {
     /// |   A   |   R  |  G   |  B   |
     /// ```
     ///
+    /// This is a **lossy** conversion; only the lower 4 bits of each component are used and the
+    /// rest are discarded.
+    ///
     /// ## Examples
     ///
     /// ```rust

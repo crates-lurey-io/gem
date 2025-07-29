@@ -1,10 +1,13 @@
 /// A trait for types that have an alpha (transparency) component.
-pub trait HasAlpha<C> {
+pub trait HasAlpha {
+    /// The type of the alpha component.
+    type Component;
+
     /// Creates a new color with the given alpha component.
     ///
     /// The other components are set to their default values.
     #[must_use]
-    fn new_alpha(value: C) -> Self
+    fn new_alpha(value: Self::Component) -> Self
     where
         Self: Sized + Default,
     {
@@ -15,18 +18,18 @@ pub trait HasAlpha<C> {
 
     /// Returns the value of the alpha component.
     #[must_use]
-    fn alpha(&self) -> C;
+    fn alpha(&self) -> Self::Component;
 
     /// Sets the alpha component to the given value.
     ///
     /// If the color has other components, they are left unchanged.
-    fn set_alpha(&mut self, value: C);
+    fn set_alpha(&mut self, value: Self::Component);
 
     /// Converts the color into a new type with the alpha component set to the given value.
     ///
     /// The other components are left unchanged.
     #[must_use]
-    fn with_alpha(self, value: C) -> Self
+    fn with_alpha(self, value: Self::Component) -> Self
     where
         Self: Sized,
     {

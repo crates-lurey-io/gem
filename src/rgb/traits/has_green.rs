@@ -1,19 +1,22 @@
 /// A trait for types that have a 🟢 green component.
-pub trait HasGreen<C> {
+pub trait HasGreen {
+    /// The type of the green component.
+    type Component;
+
     /// Returns the value of the green component.
     #[must_use]
-    fn green(&self) -> C;
+    fn green(&self) -> Self::Component;
 
     /// Sets the green component to the given value.
     ///
     /// If the color has other components, they are left unchanged.
-    fn set_green(&mut self, value: C);
+    fn set_green(&mut self, value: Self::Component);
 
     /// Converts the color into a new type with the green component set to the given value.
     ///
     /// The other components are left unchanged.
     #[must_use]
-    fn with_green(self, value: C) -> Self
+    fn with_green(self, value: Self::Component) -> Self
     where
         Self: Copy + Clone,
     {

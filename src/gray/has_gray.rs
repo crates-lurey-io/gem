@@ -1,10 +1,13 @@
 /// A trait for types that have a ⚫ ⚪ gray component.
-pub trait HasGray<C> {
+pub trait HasGray {
+    /// The type of the gray component.
+    type Component;
+
     /// Creates a new color with the given gray component.
     ///
     /// The other components are set to their default values.
     #[must_use]
-    fn new_gray(value: C) -> Self
+    fn new_gray(value: Self::Component) -> Self
     where
         Self: Sized + Default,
     {
@@ -15,18 +18,18 @@ pub trait HasGray<C> {
 
     /// Returns the value of the gray component.
     #[must_use]
-    fn gray(&self) -> C;
+    fn gray(&self) -> Self::Component;
 
     /// Sets the gray component to the given value.
     ///
     /// If the color has other components, they are left unchanged.
-    fn set_gray(&mut self, value: C);
+    fn set_gray(&mut self, value: Self::Component);
 
     /// Converts the color into a new type with the gray component set to the given value.
     ///
     /// The other components are left unchanged.
     #[must_use]
-    fn with_gray(self, value: C) -> Self
+    fn with_gray(self, value: Self::Component) -> Self
     where
         Self: Sized,
     {

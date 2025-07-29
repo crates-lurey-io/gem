@@ -3,87 +3,99 @@ use crate::{
     rgb::{HasBlue, HasGreen, HasRed},
 };
 
-impl<A, C, T> HasRed<T> for AlphaFirst<A, C>
+impl<A, C> HasRed for AlphaFirst<A, C>
 where
-    C: Copy + HasRed<T>,
+    A: Copy,
+    C: Copy + HasRed,
 {
-    fn red(&self) -> T {
+    type Component = C::Component;
+
+    fn red(&self) -> Self::Component {
         self.color().red()
     }
 
-    fn set_red(&mut self, value: T) {
-        let color = &mut **self;
-        color.set_red(value);
+    fn set_red(&mut self, value: Self::Component) {
+        *self = AlphaFirst::with_color(self.alpha(), self.color().with_red(value));
     }
 }
 
-impl<A, C, T> HasGreen<T> for AlphaFirst<A, C>
+impl<A, C> HasGreen for AlphaFirst<A, C>
 where
-    C: Copy + HasGreen<T>,
+    A: Copy,
+    C: Copy + HasGreen,
 {
-    fn green(&self) -> T {
+    type Component = C::Component;
+
+    fn green(&self) -> Self::Component {
         self.color().green()
     }
 
-    fn set_green(&mut self, value: T) {
-        let color = &mut **self;
-        color.set_green(value);
+    fn set_green(&mut self, value: Self::Component) {
+        *self = AlphaFirst::with_color(self.alpha(), self.color().with_green(value));
     }
 }
 
-impl<A, C, T> HasBlue<T> for AlphaFirst<A, C>
+impl<A, C> HasBlue for AlphaFirst<A, C>
 where
-    C: Copy + HasBlue<T>,
+    A: Copy,
+    C: Copy + HasBlue,
 {
-    fn blue(&self) -> T {
+    type Component = C::Component;
+
+    fn blue(&self) -> Self::Component {
         self.color().blue()
     }
 
-    fn set_blue(&mut self, value: T) {
-        let color = &mut **self;
-        color.set_blue(value);
+    fn set_blue(&mut self, value: Self::Component) {
+        *self = AlphaFirst::with_color(self.alpha(), self.color().with_blue(value));
     }
 }
 
-impl<A, C, T> HasRed<T> for AlphaLast<A, C>
+impl<A, C> HasRed for AlphaLast<A, C>
 where
-    C: Copy + HasRed<T>,
+    A: Copy,
+    C: Copy + HasRed,
 {
-    fn red(&self) -> T {
+    type Component = C::Component;
+
+    fn red(&self) -> Self::Component {
         self.color().red()
     }
 
-    fn set_red(&mut self, value: T) {
-        let color = &mut **self;
-        color.set_red(value);
+    fn set_red(&mut self, value: Self::Component) {
+        *self = AlphaLast::with_color(self.alpha(), self.color().with_red(value));
     }
 }
 
-impl<A, C, T> HasGreen<T> for AlphaLast<A, C>
+impl<A, C> HasGreen for AlphaLast<A, C>
 where
-    C: Copy + HasGreen<T>,
+    A: Copy,
+    C: Copy + HasGreen,
 {
-    fn green(&self) -> T {
+    type Component = C::Component;
+
+    fn green(&self) -> Self::Component {
         self.color().green()
     }
 
-    fn set_green(&mut self, value: T) {
-        let color = &mut **self;
-        color.set_green(value);
+    fn set_green(&mut self, value: Self::Component) {
+        *self = AlphaLast::with_color(self.alpha(), self.color().with_green(value));
     }
 }
 
-impl<A, C, T> HasBlue<T> for AlphaLast<A, C>
+impl<A, C> HasBlue for AlphaLast<A, C>
 where
-    C: Copy + HasBlue<T>,
+    A: Copy,
+    C: Copy + HasBlue,
 {
-    fn blue(&self) -> T {
+    type Component = C::Component;
+
+    fn blue(&self) -> Self::Component {
         self.color().blue()
     }
 
-    fn set_blue(&mut self, value: T) {
-        let color = &mut **self;
-        color.set_blue(value);
+    fn set_blue(&mut self, value: Self::Component) {
+        *self = AlphaLast::with_color(self.alpha(), self.color().with_blue(value));
     }
 }
 

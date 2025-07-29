@@ -61,6 +61,9 @@ impl Rgb565 {
 
     /// Creates a new RGB color from individual component values (r, g, b).
     ///
+    /// This is a **lossy** conversion; only the lower 5 bits of red and blue, and the lower 6 bits
+    /// of green are used.
+    ///
     /// ## Examples
     ///
     /// ```rust

@@ -1,19 +1,22 @@
 /// A trait for types that have a 🔴 red component.
-pub trait HasRed<C> {
+pub trait HasRed {
+    /// The type of the red component.
+    type Component;
+
     /// Returns the value of the red component.
     #[must_use]
-    fn red(&self) -> C;
+    fn red(&self) -> Self::Component;
 
     /// Sets the red component to the given value.
     ///
     /// If the color has other components, they are left unchanged.
-    fn set_red(&mut self, value: C);
+    fn set_red(&mut self, value: Self::Component);
 
     /// Converts the color into a new type with the red component set to the given value.
     ///
     /// The other components are left unchanged.
     #[must_use]
-    fn with_red(self, value: C) -> Self
+    fn with_red(self, value: Self::Component) -> Self
     where
         Self: Copy + Clone,
     {

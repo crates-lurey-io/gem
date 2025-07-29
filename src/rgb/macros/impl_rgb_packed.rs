@@ -5,29 +5,38 @@ macro_rules! impl_rgb_packed {
         green:{ shift: $gshift:expr, mask: $gmask:expr, clear: $gclear:expr },
         blue: { shift: $bshift:expr, mask: $bmask:expr, clear: $bclear:expr }
     ) => {
-        impl crate::rgb::HasRed<u8> for $ty {
-            fn red(&self) -> u8 {
-                ((self.packed >> $rshift) & $rmask) as u8
+        impl crate::rgb::HasRed for $ty {
+            type Component = u8;
+
+            fn red(&self) -> Self::Component {
+                ((self.packed >> $rshift) & $rmask) as Self::Component
             }
-            fn set_red(&mut self, value: u8) {
+
+            fn set_red(&mut self, value: Self::Component) {
                 self.packed = (self.packed & $rclear) | ((u16::from(value) & $rmask) << $rshift);
             }
         }
 
-        impl crate::rgb::HasGreen<u8> for $ty {
-            fn green(&self) -> u8 {
-                ((self.packed >> $gshift) & $gmask) as u8
+        impl crate::rgb::HasGreen for $ty {
+            type Component = u8;
+
+            fn green(&self) -> Self::Component {
+                ((self.packed >> $gshift) & $gmask) as Self::Component
             }
-            fn set_green(&mut self, value: u8) {
+
+            fn set_green(&mut self, value: Self::Component) {
                 self.packed = (self.packed & $gclear) | ((u16::from(value) & $gmask) << $gshift);
             }
         }
 
-        impl crate::rgb::HasBlue<u8> for $ty {
-            fn blue(&self) -> u8 {
-                ((self.packed >> $bshift) & $bmask) as u8
+        impl crate::rgb::HasBlue for $ty {
+            type Component = u8;
+
+            fn blue(&self) -> Self::Component {
+                ((self.packed >> $bshift) & $bmask) as Self::Component
             }
-            fn set_blue(&mut self, value: u8) {
+
+            fn set_blue(&mut self, value: Self::Component) {
                 self.packed = (self.packed & $bclear) | ((u16::from(value) & $bmask) << $bshift);
             }
         }

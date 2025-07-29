@@ -64,7 +64,9 @@ impl Argb1555 {
 
     /// Creates a new ARGB color from individual component values (r, g, b).
     ///
-    /// The color is fully opaque (alpha = 1).
+    /// This is a **lossy** conversion; only the lower 5 bits of each component are used.
+    ///
+    /// The resulting color is fully opaque (alpha = 1).
     ///
     /// ## Examples
     ///

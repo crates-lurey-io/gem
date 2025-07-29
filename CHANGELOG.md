@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0-alpha.4] - 2025-07-29
+
+### Changed
+
+- Traits use an associated type for `Component` instead of a generic parameter
+
+### Removed
+
+- `Deref` and `DerefMut` for `AlphaFirst` and `AlphaLast` structs
+- `crate::scalar` module, which was unused in the implementation
+- `crate::internal` module, which was unused in the implementation
+- All flags except `bytemuck`
+
 ## [0.1.0-alpha.3] - 2025-07-29
 
 ### Added

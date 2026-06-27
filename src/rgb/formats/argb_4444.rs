@@ -29,7 +29,7 @@ use crate::rgb::macros;
 ///
 /// let color = Argb4444::from_argb(15, 15, 15, 15);
 /// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Argb4444 {
@@ -82,6 +82,30 @@ impl Argb4444 {
             | ((g as u16 & 0x0F) << 4)
             | (b as u16 & 0x0F);
         Self { packed }
+    }
+}
+
+impl From<u16> for Argb4444 {
+    fn from(packed: u16) -> Self {
+        Self::new(packed)
+    }
+}
+
+impl From<Argb4444> for u16 {
+    fn from(color: Argb4444) -> Self {
+        color.packed
+    }
+}
+
+impl core::fmt::LowerHex for Argb4444 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::LowerHex::fmt(&self.packed, f)
+    }
+}
+
+impl core::fmt::UpperHex for Argb4444 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::UpperHex::fmt(&self.packed, f)
     }
 }
 

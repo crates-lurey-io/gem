@@ -62,6 +62,21 @@ impl Bgr888 {
     }
 }
 
+impl From<[u8; 3]> for Bgr888 {
+    /// Creates a `Bgr888` from `[b, g, r]` — bytes in BGR (memory) order.
+    fn from([b, g, r]: [u8; 3]) -> Self {
+        Self::from_bgr(b, g, r)
+    }
+}
+
+impl From<Bgr888> for [u8; 3] {
+    /// Returns `[b, g, r]` — bytes in BGR (memory) order.
+    fn from(color: Bgr888) -> Self {
+        use crate::rgb::{HasBlue, HasGreen, HasRed};
+        [color.blue(), color.green(), color.red()]
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -16,11 +16,9 @@ format: format-fix
 
 format-check:
     cargo fmt --all -- --check
-    cargo tool taplo format --check
 
 format-fix:
     cargo fmt --all
-    cargo tool taplo format
 
 fix:
     cargo just format-fix
@@ -54,6 +52,12 @@ test-doc *ARGS:
 test-all:
     cargo just test --all-features
     cargo just test-doc --all-features
+
+semver-checks:
+    cargo tool cargo-semver-checks --baseline-version 0.1.0-alpha.4
+
+msrv:
+    cargo tool cargo-hack check --rust-version --workspace --all-targets --ignore-private
     
 coverage *ARGS:
     cargo tool cargo-llvm-cov --lib --all-features --open

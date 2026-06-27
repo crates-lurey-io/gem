@@ -62,6 +62,45 @@ impl Rgb888 {
     }
 }
 
+impl From<[u8; 3]> for Rgb888 {
+    fn from([r, g, b]: [u8; 3]) -> Self {
+        Self::from_rgb(r, g, b)
+    }
+}
+
+impl From<Rgb888> for [u8; 3] {
+    fn from(color: Rgb888) -> Self {
+        use crate::rgb::{HasBlue, HasGreen, HasRed};
+        [color.red(), color.green(), color.blue()]
+    }
+}
+
+impl core::fmt::LowerHex for Rgb888 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        use crate::rgb::{HasBlue, HasGreen, HasRed};
+        let packed = (u32::from(self.red()) << 16)
+            | (u32::from(self.green()) << 8)
+            | u32::from(self.blue());
+        write!(f, "{packed:06x}")
+    }
+}
+
+impl core::fmt::UpperHex for Rgb888 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        use crate::rgb::{HasBlue, HasGreen, HasRed};
+        let packed = (u32::from(self.red()) << 16)
+            | (u32::from(self.green()) << 8)
+            | u32::from(self.blue());
+        write!(f, "{packed:06X}")
+    }
+}
+
+impl core::fmt::Display for Rgb888 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "#{self:x}")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -71,5 +110,35 @@ mod tests {
         assert_eq!(Rgb888::new(0x00FF_0000), Rgb888::from_rgb(255, 0, 0));
         assert_eq!(Rgb888::new(0x0000_FF00), Rgb888::from_rgb(0, 255, 0));
         assert_eq!(Rgb888::new(0x0000_00FF), Rgb888::from_rgb(0, 0, 255));
+    }
+
+    #[test]
+    fn from_array() {
+        assert_eq!(Rgb888::from([255_u8, 0, 0]), Rgb888::from_rgb(255, 0, 0));
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn into_array() {
+        let arr: [u8; 3] = Rgb888::from_rgb(255, 128, 0).into();
+        assert_eq!(arr, [255, 128, 0]);
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn lower_hex() {
+        assert_eq!(format!("{:x}", Rgb888::from_rgb(255, 128, 0)), "ff8000");
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn upper_hex() {
+        assert_eq!(format!("{:X}", Rgb888::from_rgb(255, 128, 0)), "FF8000");
+    }
+
+    #[cfg(feature = "std")]
+    #[test]
+    fn display() {
+        assert_eq!(Rgb888::from_rgb(255, 128, 0).to_string(), "#ff8000");
     }
 }

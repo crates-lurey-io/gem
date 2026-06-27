@@ -29,7 +29,7 @@ use crate::rgb::macros;
 ///
 /// let color = Rgb565::from_rgb(31, 63, 31);
 /// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Rgb565 {
@@ -78,6 +78,30 @@ impl Rgb565 {
     pub const fn from_rgb(r: u8, g: u8, b: u8) -> Self {
         let packed = ((r as u16 & 0x1F) << 11) | ((g as u16 & 0x3F) << 5) | (b as u16 & 0x1F);
         Self { packed }
+    }
+}
+
+impl From<u16> for Rgb565 {
+    fn from(packed: u16) -> Self {
+        Self::new(packed)
+    }
+}
+
+impl From<Rgb565> for u16 {
+    fn from(color: Rgb565) -> Self {
+        color.packed
+    }
+}
+
+impl core::fmt::LowerHex for Rgb565 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::LowerHex::fmt(&self.packed, f)
+    }
+}
+
+impl core::fmt::UpperHex for Rgb565 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::UpperHex::fmt(&self.packed, f)
     }
 }
 

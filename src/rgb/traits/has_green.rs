@@ -1,4 +1,4 @@
-/// A trait for types that have a 🟢 green component.
+/// A trait for types that have a green component.
 pub trait HasGreen {
     /// The type of the green component.
     type Component;

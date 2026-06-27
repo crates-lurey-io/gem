@@ -1,4 +1,4 @@
-/// A trait for types that have a ⚫ ⚪ gray component.
+/// A trait for types that have a gray component.
 pub trait HasGray {
     /// The type of the gray component.
     type Component;

@@ -1,4 +1,4 @@
-//! Color types with 🧊 alpha channel support.
+//! Color types with alpha channel support.
 //!
 //! This module contains:
 //!
@@ -37,7 +37,7 @@ pub use has_alpha::HasAlpha;
 /// ## Layout
 ///
 /// The layout of this type is always the same as the underlying type `T` (`#[repr(transparent)]`).
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Alpha<T> {
@@ -100,7 +100,7 @@ pub type Alpha8 = Alpha<u8>;
 ///   C color;
 /// }
 /// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)]
 pub struct AlphaFirst<A, C> {
     alpha: A,
@@ -109,6 +109,9 @@ pub struct AlphaFirst<A, C> {
 
 impl<A, C> AlphaFirst<A, C> {
     /// Creates a new instance of `AlphaFirst` with the given alpha and color components.
+    ///
+    /// Arguments are `(alpha, color)`, matching the memory layout of this type
+    /// (alpha is stored first in memory, then the color payload).
     #[must_use]
     pub const fn with_color(alpha: A, color: C) -> Self {
         Self { alpha, color }
@@ -140,6 +143,7 @@ impl<A, C> AlphaFirst<A, C> {
 }
 
 #[cfg(feature = "bytemuck")]
+#[allow(unsafe_code)]
 unsafe impl<A, C> bytemuck::Pod for AlphaFirst<A, C>
 where
     A: bytemuck::Pod,
@@ -148,6 +152,7 @@ where
 }
 
 #[cfg(feature = "bytemuck")]
+#[allow(unsafe_code)]
 unsafe impl<A, C> bytemuck::Zeroable for AlphaFirst<A, C>
 where
     A: bytemuck::Zeroable,
@@ -181,7 +186,7 @@ where
 ///   A alpha;
 /// }
 /// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)]
 pub struct AlphaLast<A, C> {
     color: C,
@@ -189,7 +194,11 @@ pub struct AlphaLast<A, C> {
 }
 
 impl<A, C> AlphaLast<A, C> {
-    /// Creates a new instance of `AlphaFirst` with the given color and alpha components.
+    /// Creates a new instance of `AlphaLast` with the given color and alpha components.
+    ///
+    /// Note: despite the name, `alpha` is the **first** argument and `color` is the second.
+    /// The names refer to the conceptual roles; memory layout stores `color` first, then `alpha`.
+    /// Concrete type aliases (e.g. `GrayAlpha8::new`) use the more intuitive `(color, alpha)` order.
     #[must_use]
     pub const fn with_color(alpha: A, color: C) -> Self {
         Self { color, alpha }
@@ -221,6 +230,7 @@ impl<A, C> AlphaLast<A, C> {
 }
 
 #[cfg(feature = "bytemuck")]
+#[allow(unsafe_code)]
 unsafe impl<A, C> bytemuck::Pod for AlphaLast<A, C>
 where
     A: bytemuck::Pod,
@@ -229,6 +239,7 @@ where
 }
 
 #[cfg(feature = "bytemuck")]
+#[allow(unsafe_code)]
 unsafe impl<A, C> bytemuck::Zeroable for AlphaLast<A, C>
 where
     A: bytemuck::Zeroable,
@@ -252,6 +263,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(unsafe_code)]
 mod tests {
     use super::*;
 

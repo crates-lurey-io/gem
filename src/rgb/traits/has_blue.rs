@@ -1,4 +1,4 @@
-/// A trait for types that have a 🔵 blue component.
+/// A trait for types that have a blue component.
 pub trait HasBlue {
     /// The type of the blue component.
     type Component;

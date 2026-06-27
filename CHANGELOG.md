@@ -5,18 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0-alpha.4] - 2025-07-29
+## [0.1.0-alpha.5] - 2026-06-26
+
+### Added
+
+- **Color spaces**: `Srgb`, `LinearRgb`, `Hsl`, `Hsv`, `Oklab`, `Oklch` —
+  per-channel `f32` types with `From` conversions between all spaces.
+  `Oklch` requires the `std` or `libm` feature for trigonometric functions.
+- **Blending**: `alpha_over`, `premultiply`, `unpremultiply`, `lerp`
+  functions in the new optional `blend` module (gated behind `features = ["blend"]`).
+  Compatible with the standalone `alpha-blend` crate for full Porter-Duff compositing.
+- **Named colors**: All ~147 CSS named color constants in the `named` module.
+- **Conversions**: Pixel format types (`Rgb888`, `Bgr888`, `Abgr8888`,
+  `Argb8888`) can now convert to/from `Srgb`.
+- `From<u32>` / `From<Self> for u32` for packed integer types.
+- `Hash` derive on all integer-component pixel format types.
+- `UpperHex`, `LowerHex`, `Display` impls for integer formats.
+- `From<[u8; N]>` / `From<T> for [u8; N]` for `Rgb888`, `Bgr888`.
+- `std` and `libm` feature flags for float math support in `no_std`
+  environments (follows the `alpha-blend` pattern).
 
 ### Changed
 
-- Traits use an associated type for `Component` instead of a generic parameter
-
-### Removed
-
-- `Deref` and `DerefMut` for `AlphaFirst` and `AlphaLast` structs
-- `crate::scalar` module, which was unused in the implementation
-- `crate::internal` module, which was unused in the implementation
-- All flags except `bytemuck`
+- **New lint configuration**: now matches `rg` — `unsafe_code = "deny"`,
+  `clippy::all`, `pedantic`, and `nursery` all denied.
+- `AlphaFirst` and `AlphaLast` docs clarified to show memory-order
+  vs. constructor argument order.
+- Fixed nightly-only doc attribute.
+- Updated README to show correct API (`from_abgr` instead of `new_red`).
 
 ## [0.1.0-alpha.3] - 2025-07-29
 

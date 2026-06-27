@@ -1,4 +1,4 @@
-//! Color representations that contain 🔴 red, 🟢 green, and 🔵 blue components.
+//! Color representations that contain red, green, and blue components.
 //!
 //! This module contains:
 //!
@@ -74,7 +74,7 @@ pub use traits::{HasBlue as _, HasGreen as _, HasRed as _, RgbColor as _, RgbaCo
 ///     T b;
 /// };
 /// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)]
 pub struct Rgb<T> {
     r: T,
@@ -95,10 +95,12 @@ impl<T> Rgb<T> {
 }
 
 #[cfg(feature = "bytemuck")]
-unsafe impl<T: bytemuck::Zeroable> bytemuck::Zeroable for Rgb<T> where T: bytemuck::Zeroable {}
+#[allow(unsafe_code)]
+unsafe impl<T: bytemuck::Zeroable> bytemuck::Zeroable for Rgb<T> {}
 
 #[cfg(feature = "bytemuck")]
-unsafe impl<T: bytemuck::Pod> bytemuck::Pod for Rgb<T> where T: bytemuck::Pod {}
+#[allow(unsafe_code)]
+unsafe impl<T: bytemuck::Pod> bytemuck::Pod for Rgb<T> {}
 
 macros::impl_rgb_with_fields!(Rgb<T>);
 
@@ -114,7 +116,7 @@ macros::impl_rgb_with_fields!(Rgb<T>);
 ///     T r;
 /// };
 /// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)]
 pub struct Bgr<T> {
     b: T,
@@ -145,9 +147,11 @@ impl<T> Bgr<T> {
 }
 
 #[cfg(feature = "bytemuck")]
-unsafe impl<T: bytemuck::Zeroable> bytemuck::Zeroable for Bgr<T> where T: bytemuck::Zeroable {}
+#[allow(unsafe_code)]
+unsafe impl<T: bytemuck::Zeroable> bytemuck::Zeroable for Bgr<T> {}
 
 #[cfg(feature = "bytemuck")]
-unsafe impl<T: bytemuck::Pod> bytemuck::Pod for Bgr<T> where T: bytemuck::Pod {}
+#[allow(unsafe_code)]
+unsafe impl<T: bytemuck::Pod> bytemuck::Pod for Bgr<T> {}
 
 macros::impl_rgb_with_fields!(Bgr<T>);

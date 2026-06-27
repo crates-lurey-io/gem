@@ -15,7 +15,7 @@ where
     }
 
     fn set_red(&mut self, value: Self::Component) {
-        *self = AlphaFirst::with_color(self.alpha(), self.color().with_red(value));
+        *self = Self::with_color(self.alpha(), self.color().with_red(value));
     }
 }
 
@@ -31,7 +31,7 @@ where
     }
 
     fn set_green(&mut self, value: Self::Component) {
-        *self = AlphaFirst::with_color(self.alpha(), self.color().with_green(value));
+        *self = Self::with_color(self.alpha(), self.color().with_green(value));
     }
 }
 
@@ -47,7 +47,7 @@ where
     }
 
     fn set_blue(&mut self, value: Self::Component) {
-        *self = AlphaFirst::with_color(self.alpha(), self.color().with_blue(value));
+        *self = Self::with_color(self.alpha(), self.color().with_blue(value));
     }
 }
 
@@ -63,7 +63,7 @@ where
     }
 
     fn set_red(&mut self, value: Self::Component) {
-        *self = AlphaLast::with_color(self.alpha(), self.color().with_red(value));
+        *self = Self::with_color(self.alpha(), self.color().with_red(value));
     }
 }
 
@@ -79,7 +79,7 @@ where
     }
 
     fn set_green(&mut self, value: Self::Component) {
-        *self = AlphaLast::with_color(self.alpha(), self.color().with_green(value));
+        *self = Self::with_color(self.alpha(), self.color().with_green(value));
     }
 }
 
@@ -95,7 +95,7 @@ where
     }
 
     fn set_blue(&mut self, value: Self::Component) {
-        *self = AlphaLast::with_color(self.alpha(), self.color().with_blue(value));
+        *self = Self::with_color(self.alpha(), self.color().with_blue(value));
     }
 }
 

@@ -2,7 +2,7 @@
 //!
 //! ## Examples
 //!
-//! For RGB colors without an alpha channel:
+//! For RGB pixel formats:
 //!
 //! ```rust
 //! use gem::prelude::*;
@@ -14,16 +14,15 @@
 //! let red = Rgbf32::from_rgb(1.0, 0.0, 0.0);
 //! ```
 //!
-//! Or, with an alpha channel:
+//! For color space manipulation:
 //!
 //! ```rust
 //! use gem::prelude::*;
 //!
-//! // 8-bit ARGB color, 50% transparent
-//! let red = Abgr8888::from_abgr(128, 255, 0, 0);
-//!
-//! // 32-bit floating point RGB color with alpha, 50% transparent
-//! let red = Rgbaf32::from_rgba(1.0, 0.0, 0.0, 0.5);
+//! // Convert a pixel to HSL and lighten it
+//! let pixel = Rgb888::from_rgb(200, 50, 100);
+//! let hsl = Hsl::from(Srgb::from(pixel));
+//! let lighter: Rgb888 = Srgb::from(hsl.lighten(0.15)).into();
 //! ```
 
 pub use crate::{
@@ -32,4 +31,5 @@ pub use crate::{
     rgb::{
         Abgr8888, HasBlue as _, HasGreen as _, HasRed as _, Rgb888, RgbColor as _, Rgbaf32, Rgbf32,
     },
+    space::{Hsl, Hsv, Oklab, Oklch, Srgb},
 };

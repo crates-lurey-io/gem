@@ -1,4 +1,4 @@
-//! Color representations for ⚫ ⚪ grayscale colors.
+//! Color representations for grayscale colors.
 //!
 //! This module contains:
 //!
@@ -49,7 +49,7 @@ pub use has_gray::HasGray;
 /// ## Layout
 ///
 /// The layout of this type is always the same as the underlying type `T` (`#[repr(transparent)]`).
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Gray<T> {
@@ -126,7 +126,7 @@ where
     }
 
     fn set_gray(&mut self, value: Self::Component) {
-        *self = GrayAlpha::with_color(self.alpha(), self.color().with_gray(value));
+        *self = Self::with_color(self.alpha(), self.color().with_gray(value));
     }
 }
 

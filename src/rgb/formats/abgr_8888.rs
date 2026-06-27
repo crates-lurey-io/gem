@@ -54,6 +54,7 @@ impl Abgr8888 {
     /// assert_eq!(Abgr8888::new(0xFF0000FF), Abgr8888::from_abgr(255, 0, 0, 255));
     /// ```
     #[must_use]
+    #[allow(unsafe_code)]
     pub const fn new(packed: u32) -> Self {
         unsafe { mem::transmute(packed) }
     }
@@ -75,6 +76,38 @@ impl Abgr8888 {
     pub const fn from_abgr(a: u8, b: u8, g: u8, r: u8) -> Self {
         let packed = (a as u32) << 24 | (b as u32) << 16 | (g as u32) << 8 | (r as u32);
         Self::new(packed)
+    }
+}
+
+impl From<u32> for Abgr8888 {
+    fn from(packed: u32) -> Self {
+        Self::new(packed)
+    }
+}
+
+#[allow(clippy::use_self)]
+impl From<Abgr8888> for u32 {
+    fn from(color: Abgr8888) -> Self {
+        use crate::rgb::{HasBlue, HasGreen, HasRed};
+        // Reconstruct the 0xAABBGGRR packed integer from components.
+        (u32::from(color.alpha()) << 24)
+            | (u32::from(color.blue()) << 16)
+            | (u32::from(color.green()) << 8)
+            | u32::from(color.red())
+    }
+}
+
+impl core::fmt::LowerHex for Abgr8888 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let packed: u32 = (*self).into();
+        core::fmt::LowerHex::fmt(&packed, f)
+    }
+}
+
+impl core::fmt::UpperHex for Abgr8888 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let packed: u32 = (*self).into();
+        core::fmt::UpperHex::fmt(&packed, f)
     }
 }
 
@@ -100,5 +133,23 @@ mod tests {
         assert_eq!(color.blue(), 0);
         assert_eq!(color.green(), 0);
         assert_eq!(color.red(), 255);
+    }
+
+    #[test]
+    fn from_u32() {
+        assert_eq!(Abgr8888::from(0xFF00_00FF_u32), Abgr8888::from_abgr(255, 0, 0, 255));
+    }
+
+    #[test]
+    fn into_u32() {
+        let packed: u32 = Abgr8888::from_abgr(255, 0, 0, 255).into();
+        assert_eq!(packed, 0xFF00_00FF);
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn lower_hex() {
+        // 0xAABBGGRR layout: a=0xFF, b=0x00, g=0x00, r=0xFF -> 0xFF0000FF
+        assert_eq!(format!("{:08x}", Abgr8888::from_abgr(255, 0, 0, 255)), "ff0000ff");
     }
 }

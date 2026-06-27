@@ -29,7 +29,7 @@ use crate::rgb::macros;
 ///
 /// let color = Argb1555::from_rgb(31, 31, 31);
 /// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
 #[repr(transparent)]
 pub struct Argb1555 {
@@ -87,6 +87,30 @@ impl Argb1555 {
                 | ((g as u16 & 0x1F) << 5)
                 | (b as u16 & 0x1F),
         }
+    }
+}
+
+impl From<u16> for Argb1555 {
+    fn from(packed: u16) -> Self {
+        Self::new(packed)
+    }
+}
+
+impl From<Argb1555> for u16 {
+    fn from(color: Argb1555) -> Self {
+        color.packed
+    }
+}
+
+impl core::fmt::LowerHex for Argb1555 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::LowerHex::fmt(&self.packed, f)
+    }
+}
+
+impl core::fmt::UpperHex for Argb1555 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::UpperHex::fmt(&self.packed, f)
     }
 }
 

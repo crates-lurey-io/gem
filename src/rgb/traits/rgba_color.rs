@@ -18,10 +18,10 @@ pub trait RgbaColor: Sized + Default + HasRed + HasGreen + HasBlue + HasAlpha {
     /// [`Rgbaf32::from_rgba`]: crate::rgb::Rgbaf32::from_rgba
     #[must_use]
     fn from_rgba(
-        red: <Self as crate::rgb::HasRed>::Component,
-        green: <Self as crate::rgb::HasGreen>::Component,
-        blue: <Self as crate::rgb::HasBlue>::Component,
-        alpha: <Self as crate::alpha::HasAlpha>::Component,
+        red: <Self as HasRed>::Component,
+        green: <Self as HasGreen>::Component,
+        blue: <Self as HasBlue>::Component,
+        alpha: <Self as HasAlpha>::Component,
     ) -> Self {
         let mut color = Self::default();
         color.set_red(red);
@@ -36,10 +36,10 @@ pub trait RgbaColor: Sized + Default + HasRed + HasGreen + HasBlue + HasAlpha {
     fn into_rgba(
         self,
     ) -> (
-        <Self as crate::rgb::HasRed>::Component,
-        <Self as crate::rgb::HasGreen>::Component,
-        <Self as crate::rgb::HasBlue>::Component,
-        <Self as crate::alpha::HasAlpha>::Component,
+        <Self as HasRed>::Component,
+        <Self as HasGreen>::Component,
+        <Self as HasBlue>::Component,
+        <Self as HasAlpha>::Component,
     ) {
         (self.red(), self.green(), self.blue(), self.alpha())
     }

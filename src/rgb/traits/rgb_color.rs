@@ -15,9 +15,9 @@ pub trait RgbColor: Sized + Default + HasRed + HasGreen + HasBlue {
     /// [`Rgb565::from_rgb`]: crate::rgb::Rgb565::from_rgb
     #[must_use]
     fn from_rgb(
-        red: <Self as crate::rgb::HasRed>::Component,
-        green: <Self as crate::rgb::HasGreen>::Component,
-        blue: <Self as crate::rgb::HasBlue>::Component,
+        red: <Self as HasRed>::Component,
+        green: <Self as HasGreen>::Component,
+        blue: <Self as HasBlue>::Component,
     ) -> Self {
         let mut color = Self::default();
         color.set_red(red);
@@ -31,9 +31,9 @@ pub trait RgbColor: Sized + Default + HasRed + HasGreen + HasBlue {
     fn into_rgb(
         self,
     ) -> (
-        <Self as crate::rgb::HasRed>::Component,
-        <Self as crate::rgb::HasGreen>::Component,
-        <Self as crate::rgb::HasBlue>::Component,
+        <Self as HasRed>::Component,
+        <Self as HasGreen>::Component,
+        <Self as HasBlue>::Component,
     ) {
         (self.red(), self.green(), self.blue())
     }

@@ -19,6 +19,7 @@
 /// assert!((purple.r - 0.5).abs() < 1e-6);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 pub struct Srgb {
     /// Red channel in `[0.0, 1.0]`.
@@ -182,7 +183,7 @@ impl Srgb {
     #[must_use]
     #[allow(clippy::suboptimal_flops)]
     pub fn luminance(self) -> f32 {
-        use crate::space::math::{srgb_to_linear_channel as lin};
+        use crate::space::math::srgb_to_linear_channel as lin;
         0.2126 * lin(self.r) + 0.7152 * lin(self.g) + 0.0722 * lin(self.b)
     }
 
@@ -313,6 +314,15 @@ mod tests {
         let arr: [f32; 3] = Srgb::RED.into();
         assert_eq!(arr, [1.0, 0.0, 0.0]);
         assert_eq!(Srgb::from(arr), Srgb::RED);
+    }
+
+    #[test]
+    #[cfg(feature = "serde")]
+    fn serde_roundtrip() {
+        let c = Srgb::new(0.25, 0.5, 0.75);
+        let json = serde_json::to_string(&c).unwrap();
+        let back: Srgb = serde_json::from_str(&json).unwrap();
+        assert_eq!(back, c);
     }
 
     #[test]

@@ -20,7 +20,7 @@ mod rgb_888;
 pub use rgb_888::Rgb888;
 
 mod rgb_f32;
-pub use rgb_f32::Rgbf32;
+pub use rgb_f32::RgbF32;
 
 mod rgba_f32;
-pub use rgba_f32::Rgbaf32;
+pub use rgba_f32::RgbaF32;

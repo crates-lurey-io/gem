@@ -99,6 +99,54 @@ where
     }
 }
 
+// An alpha wrapper's RGB channel range is entirely determined by its inner
+// color; alpha itself has no bearing on `Srgb` conversion.
+impl<A, C> crate::space::RgbChannelScale for AlphaFirst<A, C>
+where
+    A: Copy + Default,
+    C: Copy + crate::space::RgbChannelScale,
+{
+    const RED_MAX: f32 = C::RED_MAX;
+    const GREEN_MAX: f32 = C::GREEN_MAX;
+    const BLUE_MAX: f32 = C::BLUE_MAX;
+}
+
+impl<A, C> From<crate::space::Srgb> for AlphaFirst<A, C>
+where
+    A: Copy + Default,
+    C: Copy + crate::space::RgbChannelScale,
+    <C as HasRed>::Component: crate::space::Channel,
+    <C as HasGreen>::Component: crate::space::Channel,
+    <C as HasBlue>::Component: crate::space::Channel,
+{
+    fn from(c: crate::space::Srgb) -> Self {
+        crate::space::FromSrgb::from_srgb(c)
+    }
+}
+
+impl<A, C> crate::space::RgbChannelScale for AlphaLast<A, C>
+where
+    A: Copy + Default,
+    C: Copy + crate::space::RgbChannelScale,
+{
+    const RED_MAX: f32 = C::RED_MAX;
+    const GREEN_MAX: f32 = C::GREEN_MAX;
+    const BLUE_MAX: f32 = C::BLUE_MAX;
+}
+
+impl<A, C> From<crate::space::Srgb> for AlphaLast<A, C>
+where
+    A: Copy + Default,
+    C: Copy + crate::space::RgbChannelScale,
+    <C as HasRed>::Component: crate::space::Channel,
+    <C as HasGreen>::Component: crate::space::Channel,
+    <C as HasBlue>::Component: crate::space::Channel,
+{
+    fn from(c: crate::space::Srgb) -> Self {
+        crate::space::FromSrgb::from_srgb(c)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::rgb::Rgb888;

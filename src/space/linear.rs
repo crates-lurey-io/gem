@@ -27,6 +27,7 @@
 /// assert!((back.r - srgb.r).abs() < 0.01);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 pub struct LinearRgb {
     /// Linear red channel.

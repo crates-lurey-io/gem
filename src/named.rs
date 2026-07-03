@@ -21,11 +21,7 @@ macro_rules! named_color {
     ($name:ident, $r:expr, $g:expr, $b:expr, $hex:literal) => {
         #[doc = concat!("CSS named color `", stringify!($name), "` (`#", $hex, "`).")]
         #[allow(clippy::cast_precision_loss)]
-        pub const $name: Srgb = Srgb::new(
-            $r as f32 / 255.0,
-            $g as f32 / 255.0,
-            $b as f32 / 255.0,
-        );
+        pub const $name: Srgb = Srgb::new($r as f32 / 255.0, $g as f32 / 255.0, $b as f32 / 255.0);
     };
 }
 

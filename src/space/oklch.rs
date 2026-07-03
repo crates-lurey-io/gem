@@ -30,6 +30,7 @@
 /// # }
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 pub struct Oklch {
     /// Perceived lightness in `[0.0, 1.0]`.

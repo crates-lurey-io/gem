@@ -57,7 +57,9 @@ semver-checks:
     cargo tool cargo-semver-checks --baseline-version 0.1.0-alpha.4
 
 msrv:
-    cargo tool cargo-hack check --rust-version --workspace --all-targets --ignore-private
+    # `space` requires `std` or `libm` (no default features as of alpha.7), so
+    # pin a representative feature set here rather than checking bare defaults.
+    cargo tool cargo-hack check --rust-version --workspace --all-targets --ignore-private --features std,bytemuck,serde,blend
     
 coverage *ARGS:
     cargo tool cargo-llvm-cov --lib --all-features --open

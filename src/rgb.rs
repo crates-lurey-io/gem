@@ -20,7 +20,7 @@
 //!
 //! ## Predefined Types
 //!
-//! [`Abgr8888`] and [`Rgbaf32`] are the most common formats, but there are many others:
+//! [`Abgr8888`] and [`RgbaF32`] are the most common formats, but there are many others:
 //!
 //! Type         | Bits per pixel | Description
 //! ------------ | -------------- | -----------
@@ -28,11 +28,11 @@
 //! [`Argb1555`] | 16             | 5 bits each for RGB, 1 bit alpha
 //! [`Argb4444`] | 16             | 4 bits each for RGB, 4 bits alpha
 //! [`Argb8888`] | 32             | 8 bits each for alpha, red, green, blue
-//! [`Bgr888`]   | 24 (32 padded) | 8 bits each for RGB, 8 bits padding in memory
+//! [`Bgr888`]   | 24             | 8 bits each for RGB, no padding (`size_of == 3`)
 //! [`Rgb565`]   | 16             | 5 bits for red, 6 bits for green, 5 bits for blue
-//! [`Rgb888`]   | 24 (32 padded) | 8 bits each for red, green, blue, 8 bits padding in memory
-//! [`Rgbaf32`]  | 128            | 32 bits each for red, green, blue, alpha
-//! [`Rgbf32`]   | 96             | 32 bits each for red, green, blue
+//! [`Rgb888`]   | 24             | 8 bits each for red, green, blue, no padding (`size_of == 3`)
+//! [`RgbaF32`]  | 128            | 32 bits each for red, green, blue, alpha
+//! [`RgbF32`]   | 96             | 32 bits each for red, green, blue
 //!
 //! ## Generic Types
 //!
@@ -75,6 +75,8 @@ pub use traits::{HasBlue as _, HasGreen as _, HasRed as _, RgbColor as _, RgbaCo
 /// };
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
 #[repr(C)]
 pub struct Rgb<T> {
     r: T,
@@ -104,6 +106,24 @@ unsafe impl<T: bytemuck::Pod> bytemuck::Pod for Rgb<T> {}
 
 macros::impl_rgb_with_fields!(Rgb<T>);
 
+impl<T> crate::space::RgbChannelScale for Rgb<T>
+where
+    T: crate::space::NativeMax,
+{
+    const RED_MAX: f32 = T::MAX;
+    const GREEN_MAX: f32 = T::MAX;
+    const BLUE_MAX: f32 = T::MAX;
+}
+
+impl<T> From<crate::space::Srgb> for Rgb<T>
+where
+    T: crate::space::NativeMax,
+{
+    fn from(c: crate::space::Srgb) -> Self {
+        crate::space::FromSrgb::from_srgb(c)
+    }
+}
+
 /// A color representation that contains blue, green, and red components.
 ///
 /// ## Layout
@@ -117,6 +137,8 @@ macros::impl_rgb_with_fields!(Rgb<T>);
 /// };
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
 #[repr(C)]
 pub struct Bgr<T> {
     b: T,
@@ -155,3 +177,21 @@ unsafe impl<T: bytemuck::Zeroable> bytemuck::Zeroable for Bgr<T> {}
 unsafe impl<T: bytemuck::Pod> bytemuck::Pod for Bgr<T> {}
 
 macros::impl_rgb_with_fields!(Bgr<T>);
+
+impl<T> crate::space::RgbChannelScale for Bgr<T>
+where
+    T: crate::space::NativeMax,
+{
+    const RED_MAX: f32 = T::MAX;
+    const GREEN_MAX: f32 = T::MAX;
+    const BLUE_MAX: f32 = T::MAX;
+}
+
+impl<T> From<crate::space::Srgb> for Bgr<T>
+where
+    T: crate::space::NativeMax,
+{
+    fn from(c: crate::space::Srgb) -> Self {
+        crate::space::FromSrgb::from_srgb(c)
+    }
+}

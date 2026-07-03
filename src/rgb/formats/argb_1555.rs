@@ -1,48 +1,19 @@
-use crate::rgb::macros;
+use crate::rgb::macros::define_packed_argb;
 
-/// A 16-bit packed ARGB color representation.
-///
-/// Each component is represented by 1 bit for alpha, and 4 bits each for red, green, and blue.
-///
-/// ## Layout
-///
-/// ```c
-/// struct Argb1555 {
-///   uint16_t packed_argb;
-/// }
-/// ```
-///
-/// ## Examples
-///
-/// To create an `Argb1555` color from a packed representation:
-///
-/// ```rust
-/// use gem::rgb::Argb1555;
-///
-/// let color = Argb1555::new(0xFFFF);
-/// ```
-///
-/// To create an `Argb1555` color from individual components:
-///
-/// ```rust
-/// use gem::rgb::Argb1555;
-///
-/// let color = Argb1555::from_rgb(31, 31, 31);
-/// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
-#[repr(transparent)]
-pub struct Argb1555 {
-    packed: u16,
-}
-
-impl Argb1555 {
-    /// A fully transparent ARGB color.
-    pub const TRANSPARENT: Self = Self { packed: 0x0000 };
-
-    /// Creates a new ARGB color from the packed ([`u16`]) representation.
+define_packed_argb! {
+    /// A 16-bit packed ARGB color representation.
     ///
-    /// The packed representation is expected to have the format:
+    /// Each component is represented by 1 bit for alpha, and 5 bits each for red, green, and blue.
+    ///
+    /// ## Layout
+    ///
+    /// ```c
+    /// struct Argb1555 {
+    ///   uint16_t packed_argb;
+    /// }
+    /// ```
+    ///
+    /// The packed representation has the format:
     ///
     /// ```txt
     /// | 15 | 14-10 | 9-5  | 4-0  |
@@ -51,77 +22,33 @@ impl Argb1555 {
     ///
     /// ## Examples
     ///
+    /// To create an `Argb1555` color from a packed representation:
+    ///
     /// ```rust
     /// use gem::rgb::Argb1555;
     ///
-    /// assert_eq!(Argb1555::new(0xFFFF), Argb1555::from_rgb(31, 31, 31));
-    /// assert_eq!(Argb1555::new(0x0000), Argb1555::TRANSPARENT);
+    /// let color = Argb1555::new(0xFFFF);
     /// ```
-    #[must_use]
-    pub const fn new(packed: u16) -> Self {
-        Self { packed }
-    }
-
-    /// Creates a new ARGB color from individual component values (r, g, b).
     ///
-    /// This is a **lossy** conversion; only the lower 5 bits of each component are used.
-    ///
-    /// The resulting color is fully opaque (alpha = 1).
-    ///
-    /// ## Examples
+    /// To create an `Argb1555` color from individual components:
     ///
     /// ```rust
-    /// use gem::{alpha::HasAlpha, rgb::{Argb1555, HasRed, HasGreen, HasBlue}};
+    /// use gem::rgb::Argb1555;
     ///
     /// let color = Argb1555::from_rgb(31, 31, 31);
-    /// assert_eq!(color.alpha(), 1);
-    /// assert_eq!(color.red(), 31);
-    /// assert_eq!(color.green(), 31);
-    /// assert_eq!(color.blue(), 31);
     /// ```
-    #[must_use]
-    pub const fn from_rgb(r: u8, g: u8, b: u8) -> Self {
-        Self {
-            packed: 0x8000
-                | ((r as u16 & 0x1F) << 10)
-                | ((g as u16 & 0x1F) << 5)
-                | (b as u16 & 0x1F),
-        }
+    pub struct Argb1555 {
+        alpha: 1 @ 15,
+        red:   5 @ 10,
+        green: 5 @ 5,
+        blue:  5 @ 0,
     }
 }
 
-impl From<u16> for Argb1555 {
-    fn from(packed: u16) -> Self {
-        Self::new(packed)
-    }
+impl Argb1555 {
+    /// A fully transparent ARGB color.
+    pub const TRANSPARENT: Self = Self::new(0x0000);
 }
-
-impl From<Argb1555> for u16 {
-    fn from(color: Argb1555) -> Self {
-        color.packed
-    }
-}
-
-impl core::fmt::LowerHex for Argb1555 {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::LowerHex::fmt(&self.packed, f)
-    }
-}
-
-impl core::fmt::UpperHex for Argb1555 {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::UpperHex::fmt(&self.packed, f)
-    }
-}
-
-macros::impl_rgb_packed!(
-    Argb1555,
-    red:   { shift: 10, mask: 0x1F, clear: 0xFFE0 },
-    green: { shift: 5, mask: 0x1F, clear: 0xFF9F },
-    blue:  { shift: 0, mask: 0x1F, clear: 0xFFE0 }
-);
-
-macros::impl_with_alpha_packed!(Argb1555, 15, 0x01, 0x7FFF);
 
 #[cfg(test)]
 mod tests {
@@ -154,5 +81,23 @@ mod tests {
         assert_eq!(color.red(), 0);
         assert_eq!(color.green(), 0);
         assert_eq!(color.blue(), 0);
+    }
+
+    #[test]
+    #[cfg(feature = "serde")]
+    fn serde_roundtrip() {
+        let c = Argb1555::from_rgb(31, 20, 5);
+        let json = serde_json::to_string(&c).unwrap();
+        let back: Argb1555 = serde_json::from_str(&json).unwrap();
+        assert_eq!(back, c);
+    }
+
+    #[test]
+    fn from_argb_now_available() {
+        // Previously only Argb4444 had `from_argb`; the shared macro gives
+        // every packed ARGB format both constructors.
+        let color = Argb1555::from_argb(0, 31, 0, 0);
+        assert_eq!(color.alpha(), 0);
+        assert_eq!(color.red(), 31);
     }
 }

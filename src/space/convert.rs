@@ -4,12 +4,9 @@
 //! nested `mul_add` chains. The compiler often FMA-optimizes this anyway.
 #![allow(clippy::suboptimal_flops)]
 
-use crate::{
-    rgb::{HasBlue, HasGreen, HasRed},
-    space::{
-        math::{abs, channel_to_u8, rem_euclid},
-        Hsl, Hsv, LinearRgb, Oklab, Srgb,
-    },
+use crate::space::{
+    Hsl, Hsv, LinearRgb, Oklab, Srgb,
+    math::{abs, rem_euclid},
 };
 
 // ── Srgb ↔ LinearRgb ──────────────────────────────────────────────────────────
@@ -17,14 +14,22 @@ use crate::{
 impl From<Srgb> for LinearRgb {
     fn from(c: Srgb) -> Self {
         use crate::space::math::srgb_to_linear_channel as lin;
-        Self { r: lin(c.r), g: lin(c.g), b: lin(c.b) }
+        Self {
+            r: lin(c.r),
+            g: lin(c.g),
+            b: lin(c.b),
+        }
     }
 }
 
 impl From<LinearRgb> for Srgb {
     fn from(c: LinearRgb) -> Self {
         use crate::space::math::linear_to_srgb_channel as enc;
-        Self { r: enc(c.r), g: enc(c.g), b: enc(c.b) }
+        Self {
+            r: enc(c.r),
+            g: enc(c.g),
+            b: enc(c.b),
+        }
     }
 }
 
@@ -62,7 +67,11 @@ impl From<Srgb> for Hsl {
 
 impl From<Hsl> for Srgb {
     // h6 is in [0, 6) because c.h is in [0, 1); truncation to u32 is intentional.
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::use_self)]
+    #[allow(
+        clippy::cast_possible_truncation,
+        clippy::cast_sign_loss,
+        clippy::use_self
+    )]
     fn from(c: Hsl) -> Self {
         if c.s < f32::EPSILON {
             return Srgb::new(c.l, c.l, c.l);
@@ -106,7 +115,11 @@ impl From<Srgb> for Hsv {
 }
 
 impl From<Hsv> for Srgb {
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::use_self)]
+    #[allow(
+        clippy::cast_possible_truncation,
+        clippy::cast_sign_loss,
+        clippy::use_self
+    )]
     fn from(c: Hsv) -> Self {
         if c.s < f32::EPSILON {
             return Srgb::new(c.v, c.v, c.v);
@@ -189,7 +202,11 @@ impl From<Oklab> for crate::space::Oklch {
         use core::f32::consts::TAU;
         let chroma = sqrt(c.a * c.a + c.b * c.b);
         let h = rem_euclid(atan2(c.b, c.a) / TAU, 1.0);
-        crate::space::Oklch { l: c.l, c: chroma, h }
+        crate::space::Oklch {
+            l: c.l,
+            c: chroma,
+            h,
+        }
     }
 }
 
@@ -199,7 +216,11 @@ impl From<crate::space::Oklch> for Oklab {
         use crate::space::math::{cos, sin};
         use core::f32::consts::TAU;
         let angle = c.h * TAU;
-        Self { l: c.l, a: c.c * cos(angle), b: c.c * sin(angle) }
+        Self {
+            l: c.l,
+            a: c.c * cos(angle),
+            b: c.c * sin(angle),
+        }
     }
 }
 
@@ -221,61 +242,9 @@ impl From<crate::space::Oklch> for Srgb {
     }
 }
 
-// ── Pixel format ↔ Srgb ───────────────────────────────────────────────────────
-
-impl From<crate::rgb::Rgb888> for Srgb {
-    fn from(c: crate::rgb::Rgb888) -> Self {
-        Self {
-            r: f32::from(c.red()) / 255.0,
-            g: f32::from(c.green()) / 255.0,
-            b: f32::from(c.blue()) / 255.0,
-        }
-    }
-}
-
-#[allow(clippy::use_self)]
-impl From<Srgb> for crate::rgb::Rgb888 {
-    fn from(c: Srgb) -> Self {
-        crate::rgb::Rgb888::from_rgb(channel_to_u8(c.r), channel_to_u8(c.g), channel_to_u8(c.b))
-    }
-}
-
-impl From<crate::rgb::Bgr888> for Srgb {
-    fn from(c: crate::rgb::Bgr888) -> Self {
-        Self {
-            r: f32::from(c.red()) / 255.0,
-            g: f32::from(c.green()) / 255.0,
-            b: f32::from(c.blue()) / 255.0,
-        }
-    }
-}
-
-#[allow(clippy::use_self)]
-impl From<Srgb> for crate::rgb::Bgr888 {
-    fn from(c: Srgb) -> Self {
-        crate::rgb::Bgr888::from_bgr(channel_to_u8(c.b), channel_to_u8(c.g), channel_to_u8(c.r))
-    }
-}
-
-impl From<crate::rgb::Abgr8888> for Srgb {
-    fn from(c: crate::rgb::Abgr8888) -> Self {
-        Self {
-            r: f32::from(c.red()) / 255.0,
-            g: f32::from(c.green()) / 255.0,
-            b: f32::from(c.blue()) / 255.0,
-        }
-    }
-}
-
-impl From<crate::rgb::Argb8888> for Srgb {
-    fn from(c: crate::rgb::Argb8888) -> Self {
-        Self {
-            r: f32::from(c.red()) / 255.0,
-            g: f32::from(c.green()) / 255.0,
-            b: f32::from(c.blue()) / 255.0,
-        }
-    }
-}
+// Pixel format ↔ Srgb conversions live in `space::convert_rgb`: a single
+// blanket impl over `RgbColor + RgbChannelScale` covers every pixel format
+// (including custom ones), instead of a hand-written impl per format here.
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 

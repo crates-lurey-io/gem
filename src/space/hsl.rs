@@ -24,6 +24,7 @@
 /// assert!(result.r > 0.9);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 pub struct Hsl {
     /// Hue in `[0.0, 1.0)` (turns, not degrees).
@@ -200,7 +201,11 @@ mod tests {
     #[test]
     fn red_to_hsl() {
         let hsl = Hsl::from(Srgb::RED);
-        assert!(hsl.h.abs() < 1e-4 || (hsl.h - 1.0).abs() < 1e-4, "hue={}", hsl.h);
+        assert!(
+            hsl.h.abs() < 1e-4 || (hsl.h - 1.0).abs() < 1e-4,
+            "hue={}",
+            hsl.h
+        );
         assert!((hsl.s - 1.0).abs() < 1e-4, "sat={}", hsl.s);
         assert!((hsl.l - 0.5).abs() < 1e-4, "lit={}", hsl.l);
     }
@@ -218,9 +223,24 @@ mod tests {
         let original = Srgb::new(0.8, 0.3, 0.5);
         let hsl = Hsl::from(original);
         let back = Srgb::from(hsl);
-        assert!((back.r - original.r).abs() < 1e-5, "r: {} vs {}", back.r, original.r);
-        assert!((back.g - original.g).abs() < 1e-5, "g: {} vs {}", back.g, original.g);
-        assert!((back.b - original.b).abs() < 1e-5, "b: {} vs {}", back.b, original.b);
+        assert!(
+            (back.r - original.r).abs() < 1e-5,
+            "r: {} vs {}",
+            back.r,
+            original.r
+        );
+        assert!(
+            (back.g - original.g).abs() < 1e-5,
+            "g: {} vs {}",
+            back.g,
+            original.g
+        );
+        assert!(
+            (back.b - original.b).abs() < 1e-5,
+            "b: {} vs {}",
+            back.b,
+            original.b
+        );
     }
 
     #[test]

@@ -1,4 +1,4 @@
-use crate::{alpha::AlphaLast, rgb::Rgbf32};
+use crate::{alpha::AlphaLast, rgb::RgbF32};
 
 /// Floating-point RGBA color representation.
 ///
@@ -7,7 +7,7 @@ use crate::{alpha::AlphaLast, rgb::Rgbf32};
 /// ## Layout
 ///
 /// ```c
-/// struct Rgbaf32 {
+/// struct RgbaF32 {
 ///   float r;
 ///   float g;
 ///   float b;
@@ -17,24 +17,24 @@ use crate::{alpha::AlphaLast, rgb::Rgbf32};
 ///
 /// ## Examples
 ///
-/// To create an `Rgbaf32` color from individual components:
+/// To create an `RgbaF32` color from individual components:
 ///
 /// ```rust
-/// use gem::rgb::Rgbaf32;
+/// use gem::rgb::RgbaF32;
 ///
-/// let color = Rgbaf32::from_rgba(1.0, 0.0, 0.0, 1.0);
+/// let color = RgbaF32::from_rgba(1.0, 0.0, 0.0, 1.0);
 /// ```
-pub type Rgbaf32 = AlphaLast<f32, Rgbf32>;
+pub type RgbaF32 = AlphaLast<f32, RgbF32>;
 
-impl Rgbaf32 {
+impl RgbaF32 {
     /// Creates a new RGBA color from the individual components.
     ///
     /// ## Examples
     ///
     /// ```rust
-    /// use gem::{alpha::HasAlpha, rgb::{HasRed, HasGreen, HasBlue, Rgbaf32}};
+    /// use gem::{alpha::HasAlpha, rgb::{HasRed, HasGreen, HasBlue, RgbaF32}};
     ///
-    /// let color = Rgbaf32::from_rgba(1.0, 0.0, 0.0, 1.0);
+    /// let color = RgbaF32::from_rgba(1.0, 0.0, 0.0, 1.0);
     /// assert_eq!(color.red(), 1.0);
     /// assert_eq!(color.green(), 0.0);
     /// assert_eq!(color.blue(), 0.0);
@@ -42,7 +42,7 @@ impl Rgbaf32 {
     /// ```
     #[must_use]
     pub const fn from_rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
-        Self::with_color(a, Rgbf32::from_rgb(r, g, b))
+        Self::with_color(a, RgbF32::from_rgb(r, g, b))
     }
 }
 
@@ -55,7 +55,7 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let color = Rgbaf32::from_rgba(1.0, 0.0, 0.0, 1.0);
+        let color = RgbaF32::from_rgba(1.0, 0.0, 0.0, 1.0);
         assert_eq!(color.red(), 1.0);
         assert_eq!(color.green(), 0.0);
         assert_eq!(color.blue(), 0.0);

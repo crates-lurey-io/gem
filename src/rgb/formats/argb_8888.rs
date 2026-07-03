@@ -137,7 +137,10 @@ mod tests {
 
     #[test]
     fn from_u32() {
-        assert_eq!(Argb8888::from(0xFF00_00FF_u32), Argb8888::from_argb(255, 0, 0, 255));
+        assert_eq!(
+            Argb8888::from(0xFF00_00FF_u32),
+            Argb8888::from_argb(255, 0, 0, 255)
+        );
     }
 
     #[test]
@@ -150,6 +153,9 @@ mod tests {
     #[cfg(feature = "std")]
     #[test]
     fn lower_hex() {
-        assert_eq!(format!("{:08x}", Argb8888::from_argb(255, 0, 0, 255)), "ff0000ff");
+        assert_eq!(
+            format!("{:08x}", Argb8888::from_argb(255, 0, 0, 255)),
+            "ff0000ff"
+        );
     }
 }

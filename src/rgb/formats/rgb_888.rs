@@ -2,7 +2,7 @@ use crate::rgb::Rgb;
 
 /// 8-bit RGB color representation.
 ///
-/// Each component is represented by 8 bits, with 8 additional bits for padding.
+/// Each component is represented by 8 bits, stored contiguously with no padding.
 ///
 /// ## Layout
 ///
@@ -11,9 +11,14 @@ use crate::rgb::Rgb;
 ///   uint8_t r;
 ///   uint8_t g;
 ///   uint8_t b;
-///   // Padding: 8 bits
 /// }
 /// ```
+///
+/// `size_of::<Rgb888>() == 3` and `align_of::<Rgb888>() == 1` — there is no
+/// padding, since `Rgb<u8>` is `#[repr(C)]` over three `u8` fields (alignment
+/// 1). This differs from many GPU/graphics APIs that pad 24-bit-per-pixel
+/// formats to 32 bits for alignment; if you need that padding, add it
+/// explicitly at the buffer level rather than assuming this type provides it.
 ///
 /// ## Examples
 ///
@@ -78,9 +83,8 @@ impl From<Rgb888> for [u8; 3] {
 impl core::fmt::LowerHex for Rgb888 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         use crate::rgb::{HasBlue, HasGreen, HasRed};
-        let packed = (u32::from(self.red()) << 16)
-            | (u32::from(self.green()) << 8)
-            | u32::from(self.blue());
+        let packed =
+            (u32::from(self.red()) << 16) | (u32::from(self.green()) << 8) | u32::from(self.blue());
         write!(f, "{packed:06x}")
     }
 }
@@ -88,9 +92,8 @@ impl core::fmt::LowerHex for Rgb888 {
 impl core::fmt::UpperHex for Rgb888 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         use crate::rgb::{HasBlue, HasGreen, HasRed};
-        let packed = (u32::from(self.red()) << 16)
-            | (u32::from(self.green()) << 8)
-            | u32::from(self.blue());
+        let packed =
+            (u32::from(self.red()) << 16) | (u32::from(self.green()) << 8) | u32::from(self.blue());
         write!(f, "{packed:06X}")
     }
 }
@@ -134,6 +137,15 @@ mod tests {
     #[cfg(feature = "std")]
     fn upper_hex() {
         assert_eq!(format!("{:X}", Rgb888::from_rgb(255, 128, 0)), "FF8000");
+    }
+
+    #[test]
+    #[cfg(feature = "serde")]
+    fn serde_roundtrip() {
+        let c = Rgb888::from_rgb(1, 2, 3);
+        let json = serde_json::to_string(&c).unwrap();
+        let back: Rgb888 = serde_json::from_str(&json).unwrap();
+        assert_eq!(back, c);
     }
 
     #[cfg(feature = "std")]

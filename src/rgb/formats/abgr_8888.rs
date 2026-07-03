@@ -137,7 +137,10 @@ mod tests {
 
     #[test]
     fn from_u32() {
-        assert_eq!(Abgr8888::from(0xFF00_00FF_u32), Abgr8888::from_abgr(255, 0, 0, 255));
+        assert_eq!(
+            Abgr8888::from(0xFF00_00FF_u32),
+            Abgr8888::from_abgr(255, 0, 0, 255)
+        );
     }
 
     #[test]
@@ -150,6 +153,9 @@ mod tests {
     #[cfg(feature = "std")]
     fn lower_hex() {
         // 0xAABBGGRR layout: a=0xFF, b=0x00, g=0x00, r=0xFF -> 0xFF0000FF
-        assert_eq!(format!("{:08x}", Abgr8888::from_abgr(255, 0, 0, 255)), "ff0000ff");
+        assert_eq!(
+            format!("{:08x}", Abgr8888::from_abgr(255, 0, 0, 255)),
+            "ff0000ff"
+        );
     }
 }

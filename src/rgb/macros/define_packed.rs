@@ -72,6 +72,8 @@ macro_rules! define_packed_rgb {
         $(#[$attr])*
         #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
         #[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
+        #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+        #[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
         #[repr(transparent)]
         $vis struct $name {
             packed: u16,
@@ -145,6 +147,8 @@ macro_rules! define_packed_argb {
         $(#[$attr])*
         #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
         #[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
+        #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+        #[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
         #[repr(transparent)]
         $vis struct $name {
             packed: u16,

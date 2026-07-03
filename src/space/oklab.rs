@@ -28,6 +28,7 @@
 /// assert!(result.r > 0.3 && result.b > 0.3);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 pub struct Oklab {
     /// Perceived lightness in `[0.0, 1.0]`.

@@ -141,6 +141,15 @@ mod tests {
         assert_eq!(format!("{:X}", Rgb888::from_rgb(255, 128, 0)), "FF8000");
     }
 
+    #[test]
+    #[cfg(feature = "serde")]
+    fn serde_roundtrip() {
+        let c = Rgb888::from_rgb(1, 2, 3);
+        let json = serde_json::to_string(&c).unwrap();
+        let back: Rgb888 = serde_json::from_str(&json).unwrap();
+        assert_eq!(back, c);
+    }
+
     #[cfg(feature = "std")]
     #[test]
     fn display() {

@@ -84,6 +84,15 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
+    fn serde_roundtrip() {
+        let c = Argb1555::from_rgb(31, 20, 5);
+        let json = serde_json::to_string(&c).unwrap();
+        let back: Argb1555 = serde_json::from_str(&json).unwrap();
+        assert_eq!(back, c);
+    }
+
+    #[test]
     fn from_argb_now_available() {
         // Previously only Argb4444 had `from_argb`; the shared macro gives
         // every packed ARGB format both constructors.

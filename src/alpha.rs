@@ -42,6 +42,8 @@ pub use with_alpha::WithAlpha;
 /// The layout of this type is always the same as the underlying type `T` (`#[repr(transparent)]`).
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
 #[repr(transparent)]
 pub struct Alpha<T> {
     alpha: T,
@@ -104,6 +106,8 @@ pub type Alpha8 = Alpha<u8>;
 /// }
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
 #[repr(C)]
 pub struct AlphaFirst<A, C> {
     alpha: A,
@@ -190,6 +194,8 @@ where
 /// }
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
 #[repr(C)]
 pub struct AlphaLast<A, C> {
     color: C,

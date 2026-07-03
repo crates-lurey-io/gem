@@ -20,6 +20,7 @@
 /// assert!((red.s - 1.0).abs() < 1e-5);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 pub struct Hsv {
     /// Hue in `[0.0, 1.0)` (turns, not degrees).

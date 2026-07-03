@@ -75,6 +75,8 @@ pub use traits::{HasBlue as _, HasGreen as _, HasRed as _, RgbColor as _, RgbaCo
 /// };
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
 #[repr(C)]
 pub struct Rgb<T> {
     r: T,
@@ -135,6 +137,8 @@ where
 /// };
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
 #[repr(C)]
 pub struct Bgr<T> {
     b: T,

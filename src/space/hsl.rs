@@ -24,6 +24,7 @@
 /// assert!(result.r > 0.9);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 pub struct Hsl {
     /// Hue in `[0.0, 1.0)` (turns, not degrees).

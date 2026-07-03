@@ -42,6 +42,7 @@
 
 mod math;
 
+mod channel;
 mod srgb;
 mod linear;
 mod hsl;
@@ -49,7 +50,9 @@ mod hsv;
 mod oklab;
 mod oklch;
 mod convert;
+mod convert_rgb;
 
+pub use channel::{Channel, FromSrgb, NativeMax, RgbChannelScale};
 pub use srgb::Srgb;
 pub use linear::LinearRgb;
 pub use hsl::Hsl;

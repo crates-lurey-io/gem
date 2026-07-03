@@ -4,12 +4,9 @@
 //! nested `mul_add` chains. The compiler often FMA-optimizes this anyway.
 #![allow(clippy::suboptimal_flops)]
 
-use crate::{
-    rgb::{HasBlue, HasGreen, HasRed},
-    space::{
-        math::{abs, channel_to_u8, rem_euclid},
-        Hsl, Hsv, LinearRgb, Oklab, Srgb,
-    },
+use crate::space::{
+    math::{abs, rem_euclid},
+    Hsl, Hsv, LinearRgb, Oklab, Srgb,
 };
 
 // ── Srgb ↔ LinearRgb ──────────────────────────────────────────────────────────
@@ -221,61 +218,9 @@ impl From<crate::space::Oklch> for Srgb {
     }
 }
 
-// ── Pixel format ↔ Srgb ───────────────────────────────────────────────────────
-
-impl From<crate::rgb::Rgb888> for Srgb {
-    fn from(c: crate::rgb::Rgb888) -> Self {
-        Self {
-            r: f32::from(c.red()) / 255.0,
-            g: f32::from(c.green()) / 255.0,
-            b: f32::from(c.blue()) / 255.0,
-        }
-    }
-}
-
-#[allow(clippy::use_self)]
-impl From<Srgb> for crate::rgb::Rgb888 {
-    fn from(c: Srgb) -> Self {
-        crate::rgb::Rgb888::from_rgb(channel_to_u8(c.r), channel_to_u8(c.g), channel_to_u8(c.b))
-    }
-}
-
-impl From<crate::rgb::Bgr888> for Srgb {
-    fn from(c: crate::rgb::Bgr888) -> Self {
-        Self {
-            r: f32::from(c.red()) / 255.0,
-            g: f32::from(c.green()) / 255.0,
-            b: f32::from(c.blue()) / 255.0,
-        }
-    }
-}
-
-#[allow(clippy::use_self)]
-impl From<Srgb> for crate::rgb::Bgr888 {
-    fn from(c: Srgb) -> Self {
-        crate::rgb::Bgr888::from_bgr(channel_to_u8(c.b), channel_to_u8(c.g), channel_to_u8(c.r))
-    }
-}
-
-impl From<crate::rgb::Abgr8888> for Srgb {
-    fn from(c: crate::rgb::Abgr8888) -> Self {
-        Self {
-            r: f32::from(c.red()) / 255.0,
-            g: f32::from(c.green()) / 255.0,
-            b: f32::from(c.blue()) / 255.0,
-        }
-    }
-}
-
-impl From<crate::rgb::Argb8888> for Srgb {
-    fn from(c: crate::rgb::Argb8888) -> Self {
-        Self {
-            r: f32::from(c.red()) / 255.0,
-            g: f32::from(c.green()) / 255.0,
-            b: f32::from(c.blue()) / 255.0,
-        }
-    }
-}
+// Pixel format ↔ Srgb conversions live in `space::convert_rgb`: a single
+// blanket impl over `RgbColor + RgbChannelScale` covers every pixel format
+// (including custom ones), instead of a hand-written impl per format here.
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 

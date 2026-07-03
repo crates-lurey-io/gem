@@ -74,7 +74,7 @@ impl LerpChannel for f32 {
 /// Per-channel linear interpolation between two colors of the same format.
 ///
 /// Implemented for every [`RgbColor`] whose channels implement [`LerpChannel`]
-/// (all built-in RGB formats: [`Rgb888`], [`Rgb565`], [`Bgr888`], [`Rgbf32`],
+/// (all built-in RGB formats: [`Rgb888`], [`Rgb565`], [`Bgr888`], [`RgbF32`],
 /// the ARGB/ABGR types, and custom [`Rgb<T>`]/[`Bgr<T>`]).
 ///
 /// Only the red, green, and blue channels are interpolated. Any other bits
@@ -84,7 +84,7 @@ impl LerpChannel for f32 {
 /// [`Rgb888`]: crate::rgb::Rgb888
 /// [`Rgb565`]: crate::rgb::Rgb565
 /// [`Bgr888`]: crate::rgb::Bgr888
-/// [`Rgbf32`]: crate::rgb::Rgbf32
+/// [`RgbF32`]: crate::rgb::RgbF32
 /// [`Rgb<T>`]: crate::rgb::Rgb
 /// [`Bgr<T>`]: crate::rgb::Bgr
 ///
@@ -137,7 +137,7 @@ where
 mod tests {
     use super::*;
     use crate::alpha::AlphaFirst;
-    use crate::rgb::{Bgr888, Rgb, Rgb565, Rgb888, Rgbf32};
+    use crate::rgb::{Bgr888, Rgb, Rgb565, Rgb888, RgbF32};
 
     #[test]
     fn u8_endpoints_and_midpoint() {
@@ -196,8 +196,8 @@ mod tests {
 
     #[test]
     fn rgbf32_lerp_unclamped() {
-        let a = Rgbf32::from_rgb(0.0, -1.0, 0.0);
-        let b = Rgbf32::from_rgb(1.0, 1.0, 2.0);
+        let a = RgbF32::from_rgb(0.0, -1.0, 0.0);
+        let b = RgbF32::from_rgb(1.0, 1.0, 2.0);
         let mid = a.lerp(b, 0.5);
         assert_eq!((mid.red(), mid.green(), mid.blue()), (0.5, 0.0, 1.0));
     }

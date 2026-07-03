@@ -11,7 +11,7 @@
 //! let red = Rgb888::from_rgb(255, 0, 0);
 //!
 //! // 32-bit floating point RGB color
-//! let red = Rgbf32::from_rgb(1.0, 0.0, 0.0);
+//! let red = RgbF32::from_rgb(1.0, 0.0, 0.0);
 //! ```
 //!
 //! For color space manipulation:
@@ -30,7 +30,7 @@ pub use crate::{
     gray::HasGray as _,
     rgb::{
         Abgr8888, HasBlue as _, HasGreen as _, HasRed as _, Lerp as _, Rgb888, RgbColor as _,
-        Rgbaf32, Rgbf32,
+        RgbaF32, RgbF32,
     },
     space::{Hsl, Hsv, Oklab, Oklch, Srgb},
 };

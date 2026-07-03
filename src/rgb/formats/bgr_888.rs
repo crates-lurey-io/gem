@@ -2,7 +2,8 @@ use crate::rgb::Bgr;
 
 /// 8-bit BGR color representation.
 ///
-/// Each component is represented by 8 bits, with the order being blue, green, and red.
+/// Each component is represented by 8 bits, with the order being blue, green, and red,
+/// stored contiguously with no padding.
 ///
 /// ## Layout
 ///
@@ -11,9 +12,11 @@ use crate::rgb::Bgr;
 ///   uint8_t b;
 ///   uint8_t g;
 ///   uint8_t r;
-///   // Padding: 8 bits
 /// }
 /// ```
+///
+/// `size_of::<Bgr888>() == 3` and `align_of::<Bgr888>() == 1` — there is no
+/// padding (see [`Rgb888`][crate::rgb::Rgb888] for the same note in more detail).
 ///
 /// ## Examples
 ///

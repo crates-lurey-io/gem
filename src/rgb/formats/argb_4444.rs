@@ -1,122 +1,49 @@
-use crate::rgb::macros;
+use crate::rgb::macros::define_packed_argb;
 
-/// A 16-bit packed ARGB color representation.
-///
-/// Each component is represented by 4 bits, with the order being alpha, red, green, and blue.
-///
-/// ## Layout
-///
-/// ```c
-/// struct Argb4444 {
-///   uint16_t packed_argb;
-/// }
-/// ```
-///
-/// ## Examples
-///
-/// To create an `Argb4444` color from a packed representation:
-///
-/// ```rust
-/// use gem::rgb::Argb4444;
-///
-/// let color = Argb4444::new(0xFFFF);
-/// ```
-///
-/// To create an `Argb4444` color from individual components:
-///
-/// ```rust
-/// use gem::rgb::Argb4444;
-///
-/// let color = Argb4444::from_argb(15, 15, 15, 15);
-/// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
-#[repr(transparent)]
-pub struct Argb4444 {
-    packed: u16,
-}
-
-impl Argb4444 {
-    /// Creates a new ARGB color from the packed ([`u16`]) representation.
+define_packed_argb! {
+    /// A 16-bit packed ARGB color representation.
     ///
-    /// The packed representation is expected to have the format:
+    /// Each component is represented by 4 bits, with the order being alpha, red, green, and blue.
+    ///
+    /// ## Layout
+    ///
+    /// ```c
+    /// struct Argb4444 {
+    ///   uint16_t packed_argb;
+    /// }
+    /// ```
+    ///
+    /// The packed representation has the format:
     ///
     /// ```txt
     /// | 15-12 | 11-8 | 7-4  | 3-0  |
     /// |   A   |   R  |  G   |  B   |
     /// ```
     ///
-    /// This is a **lossy** conversion; only the lower 4 bits of each component are used and the
-    /// rest are discarded.
-    ///
     /// ## Examples
+    ///
+    /// To create an `Argb4444` color from a packed representation:
     ///
     /// ```rust
     /// use gem::rgb::Argb4444;
     ///
-    /// assert_eq!(Argb4444::new(0xFFFF), Argb4444::from_argb(15, 15, 15, 15));
-    /// assert_eq!(Argb4444::new(0x0000), Argb4444::from_argb(0, 0, 0, 0));
+    /// let color = Argb4444::new(0xFFFF);
     /// ```
-    #[must_use]
-    pub const fn new(packed: u16) -> Self {
-        Self { packed }
-    }
-
-    /// Creates a new ARGB color from the individual component values (a, r, g, b).
     ///
-    /// ## Examples
+    /// To create an `Argb4444` color from individual components:
     ///
     /// ```rust
-    /// use gem::{alpha::HasAlpha, rgb::{Argb4444,  HasRed, HasGreen, HasBlue}};
+    /// use gem::rgb::Argb4444;
     ///
-    /// let color = Argb4444::from_argb(15, 0, 0, 15);
-    /// assert_eq!(color.alpha(), 15);
-    /// assert_eq!(color.red(), 0);
-    /// assert_eq!(color.green(), 0);
-    /// assert_eq!(color.blue(), 15);
+    /// let color = Argb4444::from_argb(15, 15, 15, 15);
     /// ```
-    #[must_use]
-    pub const fn from_argb(a: u8, r: u8, g: u8, b: u8) -> Self {
-        let packed = ((a as u16 & 0x0F) << 12)
-            | ((r as u16 & 0x0F) << 8)
-            | ((g as u16 & 0x0F) << 4)
-            | (b as u16 & 0x0F);
-        Self { packed }
+    pub struct Argb4444 {
+        alpha: 4 @ 12,
+        red:   4 @ 8,
+        green: 4 @ 4,
+        blue:  4 @ 0,
     }
 }
-
-impl From<u16> for Argb4444 {
-    fn from(packed: u16) -> Self {
-        Self::new(packed)
-    }
-}
-
-impl From<Argb4444> for u16 {
-    fn from(color: Argb4444) -> Self {
-        color.packed
-    }
-}
-
-impl core::fmt::LowerHex for Argb4444 {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::LowerHex::fmt(&self.packed, f)
-    }
-}
-
-impl core::fmt::UpperHex for Argb4444 {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::UpperHex::fmt(&self.packed, f)
-    }
-}
-
-macros::impl_rgb_packed!(
-    Argb4444,
-    red:   { shift: 8, mask: 0x0F, clear: 0xF0FF },
-    green: { shift: 4, mask: 0x0F, clear: 0xFF0F },
-    blue:  { shift: 0, mask: 0x0F, clear: 0xFFF0 }
-);
-
-macros::impl_with_alpha_packed!(Argb4444, 12, 0x0F, 0x0FFF);
 
 #[cfg(test)]
 mod tests {
@@ -140,5 +67,14 @@ mod tests {
         assert_eq!(color.red(), 0);
         assert_eq!(color.green(), 0);
         assert_eq!(color.blue(), 15);
+    }
+
+    #[test]
+    fn test_argb4444_from_rgb_is_opaque() {
+        let color = Argb4444::from_rgb(1, 2, 3);
+        assert_eq!(color.alpha(), 15);
+        assert_eq!(color.red(), 1);
+        assert_eq!(color.green(), 2);
+        assert_eq!(color.blue(), 3);
     }
 }

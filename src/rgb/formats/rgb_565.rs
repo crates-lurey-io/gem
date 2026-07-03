@@ -1,45 +1,19 @@
-use crate::rgb::macros;
+use crate::rgb::macros::define_packed_rgb;
 
-/// A 16-bit packed RGB color representation.
-///
-/// Each component is represented by 5 bits for red, 6 bits for green, and 5 bits for blue.
-///
-/// ## Layout
-///
-/// ```c
-/// struct Rgb565 {
-///   uint16_t packed_rgb;
-/// }
-/// ```
-///
-/// ## Examples
-///
-/// To create an `Rgb565` color from a packed representation:
-///
-/// ```rust
-/// use gem::rgb::Rgb565;
-///
-/// let color = Rgb565::new(0xFFFF);
-/// ```
-///
-/// To create an `Rgb565` color from individual components:
-///
-/// ```rust
-/// use gem::rgb::Rgb565;
-///
-/// let color = Rgb565::from_rgb(31, 63, 31);
-/// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "bytemuck", derive(bytemuck::Zeroable, bytemuck::Pod))]
-#[repr(transparent)]
-pub struct Rgb565 {
-    packed: u16,
-}
-
-impl Rgb565 {
-    /// Creates a new RGB color from the packed ([`u16`]) representation.
+define_packed_rgb! {
+    /// A 16-bit packed RGB color representation.
     ///
-    /// The packed representation is expected to have the format:
+    /// Each component is represented by 5 bits for red, 6 bits for green, and 5 bits for blue.
+    ///
+    /// ## Layout
+    ///
+    /// ```c
+    /// struct Rgb565 {
+    ///   uint16_t packed_rgb;
+    /// }
+    /// ```
+    ///
+    /// The packed representation has the format:
     ///
     /// ```txt
     /// | 15-11 | 10-5 | 4-0  |
@@ -48,69 +22,38 @@ impl Rgb565 {
     ///
     /// ## Examples
     ///
+    /// To create an `Rgb565` color from a packed representation:
+    ///
     /// ```rust
     /// use gem::rgb::Rgb565;
     ///
-    /// assert_eq!(Rgb565::new(0xFFFF), Rgb565::from_rgb(31, 63, 31));
-    /// assert_eq!(Rgb565::new(0x0000), Rgb565::from_rgb(0, 0, 0));
+    /// let color = Rgb565::new(0xFFFF);
     /// ```
-    #[must_use]
-    pub const fn new(packed: u16) -> Self {
-        Self { packed }
-    }
-
-    /// Creates a new RGB color from individual component values (r, g, b).
     ///
-    /// This is a **lossy** conversion; only the lower 5 bits of red and blue, and the lower 6 bits
-    /// of green are used.
-    ///
-    /// ## Examples
+    /// To create an `Rgb565` color from individual components:
     ///
     /// ```rust
-    /// use gem::rgb::{HasRed, HasGreen, HasBlue, Rgb565};
+    /// use gem::rgb::Rgb565;
     ///
     /// let color = Rgb565::from_rgb(31, 63, 31);
-    /// assert_eq!(color.red(), 31);
-    /// assert_eq!(color.green(), 63);
-    /// assert_eq!(color.blue(), 31);
     /// ```
-    #[must_use]
-    pub const fn from_rgb(r: u8, g: u8, b: u8) -> Self {
-        let packed = ((r as u16 & 0x1F) << 11) | ((g as u16 & 0x3F) << 5) | (b as u16 & 0x1F);
-        Self { packed }
+    ///
+    /// Every packed pixel format also converts to/from
+    /// [`Srgb`][crate::space::Srgb], correctly scaled for its bit depth:
+    ///
+    /// ```rust
+    /// use gem::{rgb::Rgb565, space::Srgb};
+    ///
+    /// let fully_red = Rgb565::from_rgb(31, 0, 0);
+    /// let srgb: Srgb = fully_red.into();
+    /// assert!((srgb.r - 1.0).abs() < 1e-5); // 31/31, not 31/255
+    /// ```
+    pub struct Rgb565 {
+        red:   5 @ 11,
+        green: 6 @ 5,
+        blue:  5 @ 0,
     }
 }
-
-impl From<u16> for Rgb565 {
-    fn from(packed: u16) -> Self {
-        Self::new(packed)
-    }
-}
-
-impl From<Rgb565> for u16 {
-    fn from(color: Rgb565) -> Self {
-        color.packed
-    }
-}
-
-impl core::fmt::LowerHex for Rgb565 {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::LowerHex::fmt(&self.packed, f)
-    }
-}
-
-impl core::fmt::UpperHex for Rgb565 {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::UpperHex::fmt(&self.packed, f)
-    }
-}
-
-macros::impl_rgb_packed!(
-    Rgb565,
-    red:   { shift: 11, mask: 0x1F, clear: 0xFFE0 },
-    green: { shift: 5, mask: 0x3F, clear: 0xFF9F },
-    blue:  { shift: 0, mask: 0x1F, clear: 0xFFE0 }
-);
 
 #[cfg(test)]
 mod tests {
@@ -132,5 +75,18 @@ mod tests {
         assert_eq!(color.red(), 31);
         assert_eq!(color.green(), 63);
         assert_eq!(color.blue(), 31);
+    }
+
+    #[test]
+    fn new_from_rgb_equivalence() {
+        assert_eq!(Rgb565::new(0xFFFF), Rgb565::from_rgb(31, 63, 31));
+        assert_eq!(Rgb565::new(0x0000), Rgb565::from_rgb(0, 0, 0));
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn hex_formatting() {
+        assert_eq!(format!("{:04x}", Rgb565::new(0xABCD)), "abcd");
+        assert_eq!(format!("{:04X}", Rgb565::new(0xABCD)), "ABCD");
     }
 }

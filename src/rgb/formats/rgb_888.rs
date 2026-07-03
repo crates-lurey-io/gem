@@ -2,7 +2,7 @@ use crate::rgb::Rgb;
 
 /// 8-bit RGB color representation.
 ///
-/// Each component is represented by 8 bits, with 8 additional bits for padding.
+/// Each component is represented by 8 bits, stored contiguously with no padding.
 ///
 /// ## Layout
 ///
@@ -11,9 +11,14 @@ use crate::rgb::Rgb;
 ///   uint8_t r;
 ///   uint8_t g;
 ///   uint8_t b;
-///   // Padding: 8 bits
 /// }
 /// ```
+///
+/// `size_of::<Rgb888>() == 3` and `align_of::<Rgb888>() == 1` — there is no
+/// padding, since `Rgb<u8>` is `#[repr(C)]` over three `u8` fields (alignment
+/// 1). This differs from many GPU/graphics APIs that pad 24-bit-per-pixel
+/// formats to 32 bits for alignment; if you need that padding, add it
+/// explicitly at the buffer level rather than assuming this type provides it.
 ///
 /// ## Examples
 ///

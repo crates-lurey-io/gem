@@ -7,7 +7,7 @@ use crate::rgb::Rgb;
 /// ## Layout
 ///
 /// ```c
-/// struct Rgbf32 {
+/// struct RgbF32 {
 ///   float r;
 ///   float g;
 ///   float b;
@@ -16,14 +16,14 @@ use crate::rgb::Rgb;
 ///
 /// ## Examples
 ///
-/// To create an `Rgbf32` color from individual components:
+/// To create an `RgbF32` color from individual components:
 ///
 /// ```rust
-/// use gem::rgb::Rgbf32;
+/// use gem::rgb::RgbF32;
 ///
-/// let color = Rgbf32::from_rgb(1.0, 0.0, 0.0);
+/// let color = RgbF32::from_rgb(1.0, 0.0, 0.0);
 /// ```
-pub type Rgbf32 = Rgb<f32>;
+pub type RgbF32 = Rgb<f32>;
 
 #[cfg(test)]
 #[allow(clippy::float_cmp)]
@@ -34,7 +34,7 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let color = Rgbf32::from_rgb(1.0, 0.0, 0.0);
+        let color = RgbF32::from_rgb(1.0, 0.0, 0.0);
         assert_eq!(color.red(), 1.0);
         assert_eq!(color.green(), 0.0);
         assert_eq!(color.blue(), 0.0);

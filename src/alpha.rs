@@ -32,6 +32,9 @@
 mod has_alpha;
 pub use has_alpha::HasAlpha;
 
+mod with_alpha;
+pub use with_alpha::WithAlpha;
+
 /// Alpha-only color type.
 ///
 /// ## Layout

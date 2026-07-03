@@ -135,9 +135,24 @@ mod tests {
         for &srgb in &[Srgb::RED, Srgb::GREEN, Srgb::BLUE, Srgb::WHITE] {
             let lab = Oklab::from(srgb);
             let back = Srgb::from(lab).clamp();
-            assert!((back.r - srgb.r).abs() < 0.01, "r: {} vs {}", back.r, srgb.r);
-            assert!((back.g - srgb.g).abs() < 0.01, "g: {} vs {}", back.g, srgb.g);
-            assert!((back.b - srgb.b).abs() < 0.01, "b: {} vs {}", back.b, srgb.b);
+            assert!(
+                (back.r - srgb.r).abs() < 0.01,
+                "r: {} vs {}",
+                back.r,
+                srgb.r
+            );
+            assert!(
+                (back.g - srgb.g).abs() < 0.01,
+                "g: {} vs {}",
+                back.g,
+                srgb.g
+            );
+            assert!(
+                (back.b - srgb.b).abs() < 0.01,
+                "b: {} vs {}",
+                back.b,
+                srgb.b
+            );
         }
     }
 

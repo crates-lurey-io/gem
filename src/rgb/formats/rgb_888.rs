@@ -83,9 +83,8 @@ impl From<Rgb888> for [u8; 3] {
 impl core::fmt::LowerHex for Rgb888 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         use crate::rgb::{HasBlue, HasGreen, HasRed};
-        let packed = (u32::from(self.red()) << 16)
-            | (u32::from(self.green()) << 8)
-            | u32::from(self.blue());
+        let packed =
+            (u32::from(self.red()) << 16) | (u32::from(self.green()) << 8) | u32::from(self.blue());
         write!(f, "{packed:06x}")
     }
 }
@@ -93,9 +92,8 @@ impl core::fmt::LowerHex for Rgb888 {
 impl core::fmt::UpperHex for Rgb888 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         use crate::rgb::{HasBlue, HasGreen, HasRed};
-        let packed = (u32::from(self.red()) << 16)
-            | (u32::from(self.green()) << 8)
-            | u32::from(self.blue());
+        let packed =
+            (u32::from(self.red()) << 16) | (u32::from(self.green()) << 8) | u32::from(self.blue());
         write!(f, "{packed:06X}")
     }
 }

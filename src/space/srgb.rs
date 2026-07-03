@@ -183,7 +183,7 @@ impl Srgb {
     #[must_use]
     #[allow(clippy::suboptimal_flops)]
     pub fn luminance(self) -> f32 {
-        use crate::space::math::{srgb_to_linear_channel as lin};
+        use crate::space::math::srgb_to_linear_channel as lin;
         0.2126 * lin(self.r) + 0.7152 * lin(self.g) + 0.0722 * lin(self.b)
     }
 

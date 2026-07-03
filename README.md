@@ -10,7 +10,7 @@ Color representations and conversions.
 ## Examples
 
 ```sh
-cargo run --example draw-png --features bytemuck
+cargo run --example draw-png --features bytemuck,std
 ```
 
 ```rust

@@ -61,4 +61,4 @@ serde_json = "1.0"
 
 [[example]]
 name = "draw-png"
-required-features = ["bytemuck"]
+required-features = ["bytemuck", "std"]

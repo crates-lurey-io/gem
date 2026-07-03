@@ -11,7 +11,7 @@
 
 use crate::{
     rgb::{HasBlue, HasGreen, HasRed},
-    space::{channel::Channel, RgbChannelScale, Srgb},
+    space::{RgbChannelScale, Srgb, channel::Channel},
 };
 
 // `C -> Srgb` can be a single blanket impl: `Srgb` is a local type, so this
@@ -108,7 +108,10 @@ mod tests {
         // alpha to the type's `Default` (0, fully transparent) — only red,
         // green, and blue survive the trip. This matches `RgbColor::from_rgb`'s
         // existing "other components use `Default`" contract.
-        use crate::{alpha::HasAlpha, rgb::{HasBlue, HasGreen, HasRed}};
+        use crate::{
+            alpha::HasAlpha,
+            rgb::{HasBlue, HasGreen, HasRed},
+        };
         let pixel = Argb1555::from_rgb(31, 31, 31);
         let back = Argb1555::from(Srgb::from(pixel));
         assert_eq!((back.red(), back.green(), back.blue()), (31, 31, 31));
@@ -117,7 +120,10 @@ mod tests {
 
     #[test]
     fn argb4444_rgb_roundtrip_previously_missing_entirely() {
-        use crate::{alpha::HasAlpha, rgb::{HasBlue, HasGreen, HasRed}};
+        use crate::{
+            alpha::HasAlpha,
+            rgb::{HasBlue, HasGreen, HasRed},
+        };
         let pixel = Argb4444::from_argb(15, 15, 0, 15);
         let back = Argb4444::from(Srgb::from(pixel));
         assert_eq!((back.red(), back.green(), back.blue()), (15, 0, 15));

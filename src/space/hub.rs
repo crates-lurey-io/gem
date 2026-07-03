@@ -13,8 +13,8 @@
 //! other space in one call, including combinations that have no hand-written
 //! `From` impl today (e.g. `Hsl` directly to `Oklab`).
 //!
-//! The existing `From` impls in [`convert.rs`][super::convert] are kept as-is
-//! for ergonomics and backwards compatibility (`Hsl::from(srgb)` reads better
+//! The existing `From` impls in `space::convert` are kept as-is for
+//! ergonomics and backwards compatibility (`Hsl::from(srgb)` reads better
 //! than `srgb.convert::<Hsl>()` for the common conversions), but every space
 //! also implements [`ToLinear`], so it participates in the general hub for
 //! everything else.
@@ -112,9 +112,9 @@ impl ToLinear for crate::space::Oklch {
 /// Converts between any two [`ToLinear`] color spaces, routing through
 /// [`LinearRgb`].
 ///
-/// Blanket-implemented for every [`ToLinear`] type; see the
-/// [module docs][self] for why this exists alongside the concrete `From`
-/// impls in [`convert.rs`][super::convert].
+/// Blanket-implemented for every [`ToLinear`] type; see the module-level
+/// docs for why this exists alongside the concrete `From` impls in
+/// `space::convert`.
 pub trait ConvertSpace: ToLinear {
     /// Converts `self` to color space `T`.
     #[must_use]

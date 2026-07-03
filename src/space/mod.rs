@@ -43,21 +43,21 @@
 mod math;
 
 mod channel;
-mod srgb;
-mod linear;
-mod hsl;
-mod hsv;
-mod oklab;
-mod oklch;
 mod convert;
 mod convert_rgb;
+mod hsl;
+mod hsv;
 mod hub;
+mod linear;
+mod oklab;
+mod oklch;
+mod srgb;
 
 pub use channel::{Channel, FromSrgb, NativeMax, RgbChannelScale};
-pub use hub::{ConvertSpace, ToLinear};
-pub use srgb::Srgb;
-pub use linear::LinearRgb;
 pub use hsl::Hsl;
 pub use hsv::Hsv;
+pub use hub::{ConvertSpace, ToLinear};
+pub use linear::LinearRgb;
 pub use oklab::Oklab;
 pub use oklch::Oklch;
+pub use srgb::Srgb;

@@ -5,8 +5,8 @@
 #![allow(clippy::suboptimal_flops)]
 
 use crate::space::{
-    math::{abs, rem_euclid},
     Hsl, Hsv, LinearRgb, Oklab, Srgb,
+    math::{abs, rem_euclid},
 };
 
 // ── Srgb ↔ LinearRgb ──────────────────────────────────────────────────────────
@@ -14,14 +14,22 @@ use crate::space::{
 impl From<Srgb> for LinearRgb {
     fn from(c: Srgb) -> Self {
         use crate::space::math::srgb_to_linear_channel as lin;
-        Self { r: lin(c.r), g: lin(c.g), b: lin(c.b) }
+        Self {
+            r: lin(c.r),
+            g: lin(c.g),
+            b: lin(c.b),
+        }
     }
 }
 
 impl From<LinearRgb> for Srgb {
     fn from(c: LinearRgb) -> Self {
         use crate::space::math::linear_to_srgb_channel as enc;
-        Self { r: enc(c.r), g: enc(c.g), b: enc(c.b) }
+        Self {
+            r: enc(c.r),
+            g: enc(c.g),
+            b: enc(c.b),
+        }
     }
 }
 
@@ -59,7 +67,11 @@ impl From<Srgb> for Hsl {
 
 impl From<Hsl> for Srgb {
     // h6 is in [0, 6) because c.h is in [0, 1); truncation to u32 is intentional.
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::use_self)]
+    #[allow(
+        clippy::cast_possible_truncation,
+        clippy::cast_sign_loss,
+        clippy::use_self
+    )]
     fn from(c: Hsl) -> Self {
         if c.s < f32::EPSILON {
             return Srgb::new(c.l, c.l, c.l);
@@ -103,7 +115,11 @@ impl From<Srgb> for Hsv {
 }
 
 impl From<Hsv> for Srgb {
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::use_self)]
+    #[allow(
+        clippy::cast_possible_truncation,
+        clippy::cast_sign_loss,
+        clippy::use_self
+    )]
     fn from(c: Hsv) -> Self {
         if c.s < f32::EPSILON {
             return Srgb::new(c.v, c.v, c.v);
@@ -186,7 +202,11 @@ impl From<Oklab> for crate::space::Oklch {
         use core::f32::consts::TAU;
         let chroma = sqrt(c.a * c.a + c.b * c.b);
         let h = rem_euclid(atan2(c.b, c.a) / TAU, 1.0);
-        crate::space::Oklch { l: c.l, c: chroma, h }
+        crate::space::Oklch {
+            l: c.l,
+            c: chroma,
+            h,
+        }
     }
 }
 
@@ -196,7 +216,11 @@ impl From<crate::space::Oklch> for Oklab {
         use crate::space::math::{cos, sin};
         use core::f32::consts::TAU;
         let angle = c.h * TAU;
-        Self { l: c.l, a: c.c * cos(angle), b: c.c * sin(angle) }
+        Self {
+            l: c.l,
+            a: c.c * cos(angle),
+            b: c.c * sin(angle),
+        }
     }
 }
 

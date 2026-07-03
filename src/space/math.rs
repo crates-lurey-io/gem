@@ -216,10 +216,7 @@ pub(super) fn lerp_hue(a: f32, b: f32, t: f32) -> f32 {
 // ── tests ─────────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
-#[allow(
-    clippy::float_cmp,
-    clippy::float_cmp_const,
-)]
+#[allow(clippy::float_cmp, clippy::float_cmp_const)]
 mod tests {
     use super::*;
 

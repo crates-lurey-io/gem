@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0-alpha.6] - 2026-07-02
+
+### Added
+
+- **Per-channel interpolation**: `Lerp` and `LerpChannel` traits in the `rgb`
+  module (also re-exported from the prelude). `Lerp` is blanket-implemented for
+  every `RgbColor` whose channels implement `LerpChannel` — `Rgb888`, `Rgb565`,
+  `Bgr888`, `Rgbf32`, the ARGB/ABGR types, and custom `Rgb<T>`/`Bgr<T>`.
+  Interpolation happens in each format's native channel domain (no `Srgb`
+  round-trip): integer channels round half away from zero and stay exact at
+  `t = 0.5` (e.g. `0, 255 -> 128`), floating-point channels interpolate without
+  clamping. Only the red, green, and blue channels are interpolated; alpha and
+  padding bits are copied from the first operand. Requires neither `std` nor
+  `libm`.
+
 ## [0.1.0-alpha.5] - 2026-06-26
 
 ### Added

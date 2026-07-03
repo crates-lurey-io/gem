@@ -29,7 +29,8 @@ pub use crate::{
     alpha::HasAlpha as _,
     gray::HasGray as _,
     rgb::{
-        Abgr8888, HasBlue as _, HasGreen as _, HasRed as _, Rgb888, RgbColor as _, Rgbaf32, Rgbf32,
+        Abgr8888, HasBlue as _, HasGreen as _, HasRed as _, Lerp as _, Rgb888, RgbColor as _,
+        Rgbaf32, Rgbf32,
     },
     space::{Hsl, Hsv, Oklab, Oklch, Srgb},
 };

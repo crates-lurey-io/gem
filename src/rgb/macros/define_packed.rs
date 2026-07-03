@@ -167,6 +167,10 @@ macro_rules! define_packed_argb {
 
             /// Creates a new, fully-opaque color from individual red, green, and blue values.
             #[must_use]
+            #[expect(
+                clippy::cast_possible_truncation,
+                reason = "alpha bit width is always <= 8, so the max value always fits in a u8"
+            )]
             pub const fn from_rgb(r: u8, g: u8, b: u8) -> Self {
                 Self::from_argb(((1u16 << $abits) - 1) as u8, r, g, b)
             }

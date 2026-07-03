@@ -51,8 +51,10 @@ mod oklab;
 mod oklch;
 mod convert;
 mod convert_rgb;
+mod hub;
 
 pub use channel::{Channel, FromSrgb, NativeMax, RgbChannelScale};
+pub use hub::{ConvertSpace, ToLinear};
 pub use srgb::Srgb;
 pub use linear::LinearRgb;
 pub use hsl::Hsl;

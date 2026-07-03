@@ -84,7 +84,7 @@ impl NativeMax for u16 {
 }
 
 impl NativeMax for f32 {
-    const MAX: f32 = 1.0;
+    const MAX: Self = 1.0;
 }
 
 /// Supplies the maximum representable value of each RGB channel for a
@@ -154,6 +154,7 @@ pub trait FromSrgb: RgbChannelScale + Default {
 impl<C: RgbChannelScale + Default> FromSrgb for C {}
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
 

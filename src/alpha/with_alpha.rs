@@ -41,10 +41,10 @@ pub trait WithAlpha: Sized + Copy {
 impl<C> WithAlpha for C where C: Copy {}
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
     use crate::{
-        alpha::HasAlpha,
         gray::Gray8,
         rgb::{HasBlue, HasGreen, HasRed, Rgb888},
     };

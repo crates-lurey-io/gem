@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-07-04
+
+### Fixed
+
+- docs.rs build was failing: `#![feature(doc_auto_cfg)]` was merged into `doc_cfg` and removed as
+  of the nightly toolchain docs.rs builds with (rustc 1.92+). Switched to `#![feature(doc_cfg)]`,
+  the same fix already applied in `grixy` and `ixy` (`ixy` 0.6.1) for the identical reason.
+
 ## [0.1.0] - 2026-07-04
 
 ### Fixed

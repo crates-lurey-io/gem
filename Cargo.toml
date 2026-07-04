@@ -1,12 +1,12 @@
 [package]
 name = "gem"
 edition = "2024"
-license = "MIT"
+license = "MIT OR Apache-2.0"
 
 description = "Color representations and conversions"
 repository = "https://github.com/crates-lurey-io/gem"
-version = "0.1.0-alpha.7"
-rust-version = "1.88"
+version = "0.1.0"
+rust-version = "1.87"
 
 [lints.rust]
 unsafe_code = "deny"  # bytemuck Pod/Zeroable impls on generic types require unsafe impl

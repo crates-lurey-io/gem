@@ -1,7 +1,11 @@
 //! CSS named colors as [`Srgb`] constants.
 //!
-//! All 147 CSS Color Module Level 4 named colors are available here as
+//! All 148 CSS Color Module Level 4 named colors are available here as
 //! `const` statics. Values are normalized to `[0.0, 1.0]` per channel.
+//!
+//! The British "grey" spellings (`GREY`, `DARK_GREY`, ...) are provided as aliases of their
+//! American "gray" counterparts, matching the CSS spec's treatment of the two spellings as the
+//! same color.
 //!
 //! ## Examples
 //!
@@ -50,6 +54,8 @@ named_color!(DARK_BLUE, 0, 0, 139, "00008B");
 named_color!(DARK_CYAN, 0, 139, 139, "008B8B");
 named_color!(DARK_GOLDENROD, 184, 134, 11, "B8860B");
 named_color!(DARK_GRAY, 169, 169, 169, "A9A9A9");
+#[doc = "CSS named color `DARK_GREY` (`#A9A9A9`), an alias of [`DARK_GRAY`]."]
+pub const DARK_GREY: Srgb = DARK_GRAY;
 named_color!(DARK_GREEN, 0, 100, 0, "006400");
 named_color!(DARK_KHAKI, 189, 183, 107, "BDB76B");
 named_color!(DARK_MAGENTA, 139, 0, 139, "8B008B");
@@ -61,11 +67,15 @@ named_color!(DARK_SALMON, 233, 150, 122, "E9967A");
 named_color!(DARK_SEA_GREEN, 143, 188, 143, "8FBC8F");
 named_color!(DARK_SLATE_BLUE, 72, 61, 139, "483D8B");
 named_color!(DARK_SLATE_GRAY, 47, 79, 79, "2F4F4F");
+#[doc = "CSS named color `DARK_SLATE_GREY` (`#2F4F4F`), an alias of [`DARK_SLATE_GRAY`]."]
+pub const DARK_SLATE_GREY: Srgb = DARK_SLATE_GRAY;
 named_color!(DARK_TURQUOISE, 0, 206, 209, "00CED1");
 named_color!(DARK_VIOLET, 148, 0, 211, "9400D3");
 named_color!(DEEP_PINK, 255, 20, 147, "FF1493");
 named_color!(DEEP_SKY_BLUE, 0, 191, 255, "00BFFF");
 named_color!(DIM_GRAY, 105, 105, 105, "696969");
+#[doc = "CSS named color `DIM_GREY` (`#696969`), an alias of [`DIM_GRAY`]."]
+pub const DIM_GREY: Srgb = DIM_GRAY;
 named_color!(DODGER_BLUE, 30, 144, 255, "1E90FF");
 named_color!(FIREBRICK, 178, 34, 34, "B22222");
 named_color!(FLORAL_WHITE, 255, 250, 240, "FFFAF0");
@@ -76,6 +86,8 @@ named_color!(GHOST_WHITE, 248, 248, 255, "F8F8FF");
 named_color!(GOLD, 255, 215, 0, "FFD700");
 named_color!(GOLDENROD, 218, 165, 32, "DAA520");
 named_color!(GRAY, 128, 128, 128, "808080");
+#[doc = "CSS named color `GREY` (`#808080`), an alias of [`GRAY`]."]
+pub const GREY: Srgb = GRAY;
 named_color!(GREEN, 0, 128, 0, "008000");
 named_color!(GREEN_YELLOW, 173, 255, 47, "ADFF2F");
 named_color!(HONEYDEW, 240, 255, 240, "F0FFF0");
@@ -93,12 +105,16 @@ named_color!(LIGHT_CORAL, 240, 128, 128, "F08080");
 named_color!(LIGHT_CYAN, 224, 255, 255, "E0FFFF");
 named_color!(LIGHT_GOLDENROD_YELLOW, 250, 250, 210, "FAFAD2");
 named_color!(LIGHT_GRAY, 211, 211, 211, "D3D3D3");
+#[doc = "CSS named color `LIGHT_GREY` (`#D3D3D3`), an alias of [`LIGHT_GRAY`]."]
+pub const LIGHT_GREY: Srgb = LIGHT_GRAY;
 named_color!(LIGHT_GREEN, 144, 238, 144, "90EE90");
 named_color!(LIGHT_PINK, 255, 182, 193, "FFB6C1");
 named_color!(LIGHT_SALMON, 255, 160, 122, "FFA07A");
 named_color!(LIGHT_SEA_GREEN, 32, 178, 170, "20B2AA");
 named_color!(LIGHT_SKY_BLUE, 135, 206, 250, "87CEFA");
 named_color!(LIGHT_SLATE_GRAY, 119, 136, 153, "778899");
+#[doc = "CSS named color `LIGHT_SLATE_GREY` (`#778899`), an alias of [`LIGHT_SLATE_GRAY`]."]
+pub const LIGHT_SLATE_GREY: Srgb = LIGHT_SLATE_GRAY;
 named_color!(LIGHT_STEEL_BLUE, 176, 196, 222, "B0C4DE");
 named_color!(LIGHT_YELLOW, 255, 255, 224, "FFFFE0");
 named_color!(LIME, 0, 255, 0, "00FF00");
@@ -152,6 +168,8 @@ named_color!(SILVER, 192, 192, 192, "C0C0C0");
 named_color!(SKY_BLUE, 135, 206, 235, "87CEEB");
 named_color!(SLATE_BLUE, 106, 90, 205, "6A5ACD");
 named_color!(SLATE_GRAY, 112, 128, 144, "708090");
+#[doc = "CSS named color `SLATE_GREY` (`#708090`), an alias of [`SLATE_GRAY`]."]
+pub const SLATE_GREY: Srgb = SLATE_GRAY;
 named_color!(SNOW, 255, 250, 250, "FFFAFA");
 named_color!(SPRING_GREEN, 0, 255, 127, "00FF7F");
 named_color!(STEEL_BLUE, 70, 130, 180, "4682B4");

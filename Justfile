@@ -27,6 +27,10 @@ fix:
 check:
     cargo just format
     cargo just lint
+    # Catches the default-feature-set regression that broke `cargo publish` verification for
+    # 0.1.0: `just lint`/`just test-all` only ever exercise `--all-features`, which never builds
+    # what `cargo add gem` (or `cargo publish`'s own verification build) actually compiles.
+    cargo build
 
     cargo just doc-check
 

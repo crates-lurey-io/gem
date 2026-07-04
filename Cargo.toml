@@ -34,12 +34,14 @@ cargo-semver-checks = { version = "0.48.0", locked = true }
 just = { version = "1.40.0" }
 
 [features]
-# No math backend is enabled by default: the pixel-format layer (`rgb`,
-# `gray`, `alpha`) needs none, and the `space` module requires an explicit
-# opt-in to either `std` or `libm` (see the compile-time error in
-# `src/space/math.rs` if you forget). This keeps `cargo add gem` from pulling
-# in `libm` for consumers who only want zero-cost pixel formats.
-default = []
+# `libm` is enabled by default so a bare `cargo add gem` / `cargo publish` verification build
+# actually compiles: the pixel-format layer (`rgb`, `gray`, `alpha`) needs no math backend, but
+# the always-compiled `space` module does (see the compile-time error in `src/space/math.rs`),
+# and `default = []` previously left that requirement unsatisfied by default. Consumers who only
+# want zero-cost pixel formats and want to avoid `libm` can `default-features = false`; std
+# consumers should additionally set `features = ["std"]`, which `space` prefers over `libm` when
+# both are present.
+default = ["libm"]
 std = []
 blend = []
 libm = ["dep:libm"]

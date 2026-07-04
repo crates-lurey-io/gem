@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`cargo publish`'s own verification build failed**: `default = []` meant a bare `cargo add gem`
+  (or `cargo publish`, which builds the default feature set to verify the package) failed to
+  compile, because the always-compiled `space` module hits a `compile_error!` in `src/space/math.rs`
+  without `std` or `libm` enabled. This shipped in the `v0.1.0` tag's first publish attempt, which
+  failed in CI before anything reached crates.io. Fixed by making `default = ["libm"]`; consumers
+  who only want zero-cost pixel formats can still `default-features = false`. Added `cargo build`
+  (default features) to `just check` so this class of regression fails CI immediately instead of
+  only surfacing at publish time.
 - `named` module doc comment claimed "147" CSS named colors while only defining 141 `const`s.
   Added the 7 missing British-spelling aliases (`GREY`, `DARK_GREY`, `DARK_SLATE_GREY`,
   `DIM_GREY`, `LIGHT_GREY`, `LIGHT_SLATE_GREY`, `SLATE_GREY`) so the crate now defines all 148

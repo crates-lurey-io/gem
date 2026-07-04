@@ -54,7 +54,10 @@ test-all:
     cargo just test-doc --all-features
 
 semver-checks:
-    cargo tool cargo-semver-checks --baseline-version 0.1.0-alpha.4
+    # No --baseline-version pin: see grixy's Justfile for why hardcoding a prerelease baseline
+    # is fragile on a pre-1.0 track. Letting cargo-semver-checks auto-select the baseline compares
+    # against the latest actual published release instead.
+    cargo tool cargo-semver-checks
 
 msrv:
     # `space` requires `std` or `libm` (no default features as of alpha.7), so

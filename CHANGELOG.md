@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0] - 2026-07-04
+
+### Fixed
+
+- `named` module doc comment claimed "147" CSS named colors while only defining 141 `const`s.
+  Added the 7 missing British-spelling aliases (`GREY`, `DARK_GREY`, `DARK_SLATE_GREY`,
+  `DIM_GREY`, `LIGHT_GREY`, `LIGHT_SLATE_GREY`, `SLATE_GREY`) so the crate now defines all 148
+  CSS Color Module Level 4 named colors, and corrected the doc count.
+
+### Changed
+
+- **License changed from `MIT` to `MIT OR Apache-2.0`**, matching every other crate in the
+  ecosystem (`ixy`, `grixy`, `hexal`, `framepace`). Added `LICENSE-APACHE` and renamed `LICENSE` to
+  `LICENSE-MIT`.
+- **MSRV lowered from `1.88` to `1.87`**, matching the rest of the ecosystem. Verified the crate
+  builds, lints, and tests clean on `1.87` with `--all-features`; nothing in the source actually
+  required `1.88`.
+
+### Chores
+
+- `just semver-checks` no longer hardcodes a stale prerelease baseline (`0.1.0-alpha.4`); lets
+  `cargo-semver-checks` auto-select the latest published baseline, matching `grixy`'s fix for the
+  same issue.
+
 ## [0.1.0-alpha.7] - 2026-07-03
 
 ### Changed (breaking)

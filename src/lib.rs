@@ -60,7 +60,7 @@
 //!   syntax (`rgb()`, `hsl()`, `oklch()` functional notation, etc.).
 
 #![cfg_attr(not(feature = "std"), no_std)]
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 #[cfg(any(feature = "std", test))]
 extern crate std;

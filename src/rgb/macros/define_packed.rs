@@ -101,13 +101,15 @@ macro_rules! define_packed_rgb {
             blue:  { shift: $bshift, mask: (1u16 << $bbits) - 1, clear: !(((1u16 << $bbits) - 1) << $bshift) }
         );
 
-        impl crate::space::RgbChannelScale for $name {
+        #[cfg(feature = "space")]
+impl crate::space::RgbChannelScale for $name {
             const RED_MAX: f32 = ((1u16 << $rbits) - 1) as f32;
             const GREEN_MAX: f32 = ((1u16 << $gbits) - 1) as f32;
             const BLUE_MAX: f32 = ((1u16 << $bbits) - 1) as f32;
         }
 
-        impl From<crate::space::Srgb> for $name {
+        #[cfg(feature = "space")]
+impl From<crate::space::Srgb> for $name {
             fn from(c: crate::space::Srgb) -> Self {
                 crate::space::FromSrgb::from_srgb(c)
             }
@@ -194,13 +196,15 @@ macro_rules! define_packed_argb {
             !(((1u16 << $abits) - 1) << $ashift)
         );
 
-        impl crate::space::RgbChannelScale for $name {
+        #[cfg(feature = "space")]
+impl crate::space::RgbChannelScale for $name {
             const RED_MAX: f32 = ((1u16 << $rbits) - 1) as f32;
             const GREEN_MAX: f32 = ((1u16 << $gbits) - 1) as f32;
             const BLUE_MAX: f32 = ((1u16 << $bbits) - 1) as f32;
         }
 
-        impl From<crate::space::Srgb> for $name {
+        #[cfg(feature = "space")]
+impl From<crate::space::Srgb> for $name {
             fn from(c: crate::space::Srgb) -> Self {
                 crate::space::FromSrgb::from_srgb(c)
             }

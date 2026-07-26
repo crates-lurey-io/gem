@@ -32,6 +32,10 @@ check:
     # what `cargo add gem` (or `cargo publish`'s own verification build) actually compiles.
     cargo build
 
+    # The pixel-format layer must build and pass its own tests with no math backend at all;
+    # that is the whole contract `default-features = false` consumers rely on.
+    cargo test --no-default-features
+
     cargo just doc-check
 
 doc:
@@ -64,8 +68,10 @@ semver-checks:
     cargo tool cargo-semver-checks
 
 msrv:
-    # `space` requires `std` or `libm` (no default features as of alpha.7), so
-    # pin a representative feature set here rather than checking bare defaults.
+    # Bare defaults are now the pixel-format layer alone, which is worth checking on its own
+    # (it is what `default-features = false` consumers get), but is not representative of the
+    # whole crate. Check both ends.
+    cargo tool cargo-hack check --rust-version --workspace --all-targets --ignore-private --no-default-features
     cargo tool cargo-hack check --rust-version --workspace --all-targets --ignore-private --features std,bytemuck,serde,blend
     
 coverage *ARGS:

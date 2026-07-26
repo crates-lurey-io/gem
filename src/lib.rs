@@ -2,17 +2,19 @@
 //!
 //! `gem` is organized into two complementary layers:
 //!
-//! - **Pixel formats** (`rgb`, `gray`, `alpha`): zero-cost, memory-layout-accurate types
-//!   for GPU buffers, PNG encoding, and hardware interop. These are `no_std`-compatible
-//!   and work without any math at all.
+//! - **Pixel formats** (`rgb`, `gray`, `alpha`, `channel`): zero-cost,
+//!   memory-layout-accurate types for GPU buffers, PNG encoding, and hardware
+//!   interop, plus `const` integer channel arithmetic. These are
+//!   `no_std`-compatible and need no math backend at all.
 //!
 //! - **Color spaces** (`space`, `named`, `blend`): perceptual and working-space types
 //!   for manipulation, interpolation, and compositing. These are also `no_std`-compatible
-//!   but see the [`space`] module documentation for accuracy notes.
+//!   but need `std` or `libm`; see the [`space`] module documentation for accuracy notes.
 //!
 //! ## Quick start
 //!
 //! ```rust
+//! # #[cfg(feature = "space")] {
 //! use gem::prelude::*;
 //! use gem::space::{Hsl, Srgb};
 //! use gem::rgb::Rgb888;
@@ -24,23 +26,44 @@
 //! let hsl = Hsl::from(Srgb::from(pixel));
 //! let lighter: Rgb888 = Srgb::from(hsl.lighten(0.15)).into();
 //! assert!(lighter.red() >= pixel.red() || lighter.green() >= pixel.green());
+//! # }
 //! ```
 //!
 //! ## Features
 //!
 //! | Feature | Description |
 //! |---------|-------------|
-//! | `std` | Required (or `libm`) to use [`space`]: accurate gamma correction (`x^2.4`) and Oklch trig conversions need a math backend |
-//! | `libm` | Alternative to `std` for [`space`] in `no_std` environments |
+//! | `std` | Turns on [`space`], using the standard library's math |
+//! | `libm` | Turns on [`space`] in `no_std` environments, using `libm`'s math |
 //! | `libm-arch` | Architecture-specific `libm` intrinsics; only meaningful with `libm` |
+//! | `blend` | Enables the [`blend`] module (Porter-Duff compositing, premultiplied alpha); implies `space` |
 //! | `bytemuck` | Derives `Pod`/`Zeroable` for all pixel format types, enabling zero-copy buffer casting |
 //! | `serde` | Derives `Serialize`/`Deserialize` for pixel format and color space types |
-//! | `blend` | Enables the [`blend`] module (Porter-Duff compositing, premultiplied alpha) |
+//! | `space` | Turned on by the four above; you should not need to name it directly |
 //!
-//! No feature is enabled by default. The pixel-format layer (`rgb`, `gray`,
-//! `alpha`) needs none of them. [`space`] needs `std` or `libm` — pick
-//! whichever fits your target; `cargo build` will fail with a clear error if
-//! you forget.
+//! No feature is enabled by default, and the default build is the full
+//! pixel-format layer: [`rgb`], [`gray`], [`alpha`], [`channel`], and [`Mix`]
+//! all work with `default-features = false` and no math backend.
+//!
+//! [`space`], [`named`], and [`blend`] need accurate `x^2.4` gamma correction
+//! and trigonometry, so they are compiled only when `std` or `libm` is enabled.
+//! Enable whichever fits your target; a bare `cargo add gem` gets you the
+//! pixel-format layer alone.
+//!
+//! ## Rounding
+//!
+//! Every integer channel result in this crate is **round-to-nearest, ties away
+//! from zero**. This holds for [`channel`]'s `const` integer math, for
+//! [`Mix`] on integer-channel formats, and for every conversion out of
+//! [`space`] into a pixel format.
+//!
+//! This is a deliberate crate-wide guarantee rather than an implementation
+//! detail. Compositing pipelines routinely mix libraries that each pick their
+//! own `/255` convention, and the cheap truncating one (`(v + (v >> 8) + 1) >> 8`,
+//! exactly `floor(v / 255)`) biases every channel downward by up to a full
+//! step, so an image that is composited repeatedly visibly darkens. No
+//! operation here does that, and the tests in [`channel`] prove it
+//! exhaustively rather than by sampling.
 //!
 //! ## Non-goals
 //!
@@ -66,11 +89,22 @@
 extern crate std;
 
 pub mod alpha;
+pub mod channel;
 pub mod gray;
 pub mod prelude;
 pub mod rgb;
 
+mod mix;
+pub use mix::Mix;
+
 #[cfg(feature = "blend")]
+#[cfg_attr(docsrs, doc(cfg(feature = "blend")))]
 pub mod blend;
+
+#[cfg(feature = "space")]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "std", feature = "libm"))))]
 pub mod named;
+
+#[cfg(feature = "space")]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "std", feature = "libm"))))]
 pub mod space;

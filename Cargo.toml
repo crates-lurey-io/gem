@@ -5,7 +5,7 @@ license = "MIT OR Apache-2.0"
 
 description = "Color representations and conversions"
 repository = "https://github.com/crates-lurey-io/gem"
-version = "0.1.1"
+version = "0.2.0"
 rust-version = "1.87"
 
 [lints.rust]
@@ -23,6 +23,13 @@ missing_errors_doc = "deny"
 missing_panics_doc = "deny"
 module_name_repetitions = "allow"
 
+# `default = []` is the pixel-format layer alone, so without this docs.rs would publish docs with
+# no `space`, `named`, or `blend` at all. `--cfg docsrs` turns on the `doc_cfg` attributes that
+# label which feature each gated item needs.
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [workspace]
 members = ["tools/cargo-bin"]
 
@@ -34,18 +41,23 @@ cargo-semver-checks = { version = "0.48.0", locked = true }
 just = { version = "1.40.0" }
 
 [features]
-# `libm` is enabled by default so a bare `cargo add gem` / `cargo publish` verification build
-# actually compiles: the pixel-format layer (`rgb`, `gray`, `alpha`) needs no math backend, but
-# the always-compiled `space` module does (see the compile-time error in `src/space/math.rs`),
-# and `default = []` previously left that requirement unsatisfied by default. Consumers who only
-# want zero-cost pixel formats and want to avoid `libm` can `default-features = false`; std
-# consumers should additionally set `features = ["std"]`, which `space` prefers over `libm` when
-# both are present.
-default = ["libm"]
-std = []
-blend = []
-libm = ["dep:libm"]
+# Nothing is on by default: the pixel-format layer (`rgb`, `gray`, `alpha`, `channel`) needs no
+# math backend at all, and that layer alone is what `default-features = false` should get you.
+#
+# 0.1.x had `default = ["libm"]` as a workaround: `space` was compiled unconditionally and hit a
+# `compile_error!` without a math backend, which broke `cargo publish`'s verification build. The
+# module is now `#[cfg]`-gated instead, so the workaround is gone and the default set is honest.
+default = []
+
+# Compiles `space`, `named`, and the `From<Srgb>` conversions on every pixel format. Turned on
+# automatically by `std`, `libm`, and `blend`; you should not need to name it directly, and
+# enabling it without a math backend is a compile error (see `src/space/math.rs`).
+space = []
+
+std = ["space"]
+libm = ["space", "dep:libm"]
 libm-arch = ["libm/arch"]
+blend = ["space"]
 bytemuck = ["dep:bytemuck"]
 serde = ["dep:serde"]
 

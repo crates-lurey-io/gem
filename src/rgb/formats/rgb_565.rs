@@ -38,15 +38,17 @@ define_packed_rgb! {
     /// let color = Rgb565::from_rgb(31, 63, 31);
     /// ```
     ///
-    /// Every packed pixel format also converts to/from
-    /// [`Srgb`][crate::space::Srgb], correctly scaled for its bit depth:
+    /// With `std` or `libm` enabled, every packed pixel format also converts
+    /// to/from [`Srgb`][crate::space::Srgb], correctly scaled for its bit depth:
     ///
     /// ```rust
+    /// # #[cfg(feature = "space")] {
     /// use gem::{rgb::Rgb565, space::Srgb};
     ///
     /// let fully_red = Rgb565::from_rgb(31, 0, 0);
     /// let srgb: Srgb = fully_red.into();
     /// assert!((srgb.r - 1.0).abs() < 1e-5); // 31/31, not 31/255
+    /// # }
     /// ```
     pub struct Rgb565 {
         red:   5 @ 11,

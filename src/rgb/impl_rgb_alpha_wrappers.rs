@@ -101,6 +101,7 @@ where
 
 // An alpha wrapper's RGB channel range is entirely determined by its inner
 // color; alpha itself has no bearing on `Srgb` conversion.
+#[cfg(feature = "space")]
 impl<A, C> crate::space::RgbChannelScale for AlphaFirst<A, C>
 where
     A: Copy + Default,
@@ -111,6 +112,7 @@ where
     const BLUE_MAX: f32 = C::BLUE_MAX;
 }
 
+#[cfg(feature = "space")]
 impl<A, C> From<crate::space::Srgb> for AlphaFirst<A, C>
 where
     A: Copy + Default,
@@ -124,6 +126,7 @@ where
     }
 }
 
+#[cfg(feature = "space")]
 impl<A, C> crate::space::RgbChannelScale for AlphaLast<A, C>
 where
     A: Copy + Default,
@@ -134,6 +137,7 @@ where
     const BLUE_MAX: f32 = C::BLUE_MAX;
 }
 
+#[cfg(feature = "space")]
 impl<A, C> From<crate::space::Srgb> for AlphaLast<A, C>
 where
     A: Copy + Default,

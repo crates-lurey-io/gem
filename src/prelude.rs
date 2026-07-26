@@ -14,23 +14,28 @@
 //! let red = RgbF32::from_rgb(1.0, 0.0, 0.0);
 //! ```
 //!
-//! For color space manipulation:
+//! For color space manipulation (requires `std` or `libm`):
 //!
 //! ```rust
+//! # #[cfg(feature = "space")] {
 //! use gem::prelude::*;
 //!
 //! // Convert a pixel to HSL and lighten it
 //! let pixel = Rgb888::from_rgb(200, 50, 100);
 //! let hsl = Hsl::from(Srgb::from(pixel));
 //! let lighter: Rgb888 = Srgb::from(hsl.lighten(0.15)).into();
+//! # }
 //! ```
 
 pub use crate::{
+    Mix as _,
     alpha::{HasAlpha as _, WithAlpha as _},
+    channel::MixChannel as _,
     gray::HasGray as _,
     rgb::{
-        Abgr8888, HasBlue as _, HasGreen as _, HasRed as _, Lerp as _, Rgb888, RgbColor as _,
-        RgbF32, RgbaF32,
+        Abgr8888, HasBlue as _, HasGreen as _, HasRed as _, Rgb888, RgbColor as _, RgbF32, RgbaF32,
     },
-    space::{Hsl, Hsv, Oklab, Oklch, Srgb},
 };
+
+#[cfg(feature = "space")]
+pub use crate::space::{Hsl, Hsv, Oklab, Oklch, Srgb};

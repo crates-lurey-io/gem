@@ -9,9 +9,11 @@ extern crate std;
 
 #[cfg(not(any(feature = "std", feature = "libm")))]
 compile_error!(
-    "Either the 'std' or 'libm' feature must be enabled for gem's color space module. \
-     Add `features = [\"std\"]` (if you have std available) or `features = [\"libm\"]` \
-     (for no_std environments) to your dependency."
+    "gem's `space` module needs a math backend: enable `std` (if you have std available) or \
+     `libm` (for no_std environments). Both turn on the `space` feature, so you should never \
+     need to name `space` yourself; if you enabled `blend`, add `std` or `libm` alongside it. \
+     The pixel-format layer (`rgb`, `gray`, `alpha`, `channel`) needs neither and is always \
+     available."
 );
 
 // ── float wrappers ────────────────────────────────────────────────────────────

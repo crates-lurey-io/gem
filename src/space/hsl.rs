@@ -44,31 +44,6 @@ impl Hsl {
         Self { h, s, l }
     }
 
-    /// Linearly interpolates between `self` and `other` by `t`, taking the
-    /// shortest path around the hue circle.
-    ///
-    /// ## Examples
-    ///
-    /// ```rust
-    /// use gem::space::Hsl;
-    ///
-    /// // Lerping hue: 0.9 (near red from the negative side) to 0.1 (near red
-    /// // from the positive side) at t=0.5 should pass through 0.0 (red).
-    /// let a = Hsl::new(0.9, 1.0, 0.5);
-    /// let b = Hsl::new(0.1, 1.0, 0.5);
-    /// let mid = a.lerp(b, 0.5);
-    /// assert!(mid.h < 0.05 || mid.h > 0.95);
-    /// ```
-    #[must_use]
-    pub fn lerp(self, other: Self, t: f32) -> Self {
-        use crate::space::math::{lerp_f32, lerp_hue};
-        Self {
-            h: lerp_hue(self.h, other.h, t),
-            s: lerp_f32(self.s, other.s, t),
-            l: lerp_f32(self.l, other.l, t),
-        }
-    }
-
     /// Increases lightness by `amount`, clamping to `[0.0, 1.0]`.
     ///
     /// ## Examples
@@ -180,6 +155,32 @@ impl Hsl {
     }
 }
 
+/// Interpolates hue along the shortest path around the circle, and saturation
+/// and lightness linearly.
+///
+/// ## Examples
+///
+/// ```rust
+/// use gem::{Mix as _, space::Hsl};
+///
+/// // Hue 0.9 (near red from below) to 0.1 (near red from above) at t = 0.5
+/// // passes through 0.0 (red), not through 0.5 (cyan).
+/// let a = Hsl::new(0.9, 1.0, 0.5);
+/// let b = Hsl::new(0.1, 1.0, 0.5);
+/// let mid = a.mix(b, 0.5);
+/// assert!(mid.h < 0.05 || mid.h > 0.95);
+/// ```
+impl crate::Mix for Hsl {
+    fn mix(self, other: Self, t: f32) -> Self {
+        use crate::space::math::{lerp_f32, lerp_hue};
+        Self {
+            h: lerp_hue(self.h, other.h, t),
+            s: lerp_f32(self.s, other.s, t),
+            l: lerp_f32(self.l, other.l, t),
+        }
+    }
+}
+
 impl From<[f32; 3]> for Hsl {
     fn from([h, s, l]: [f32; 3]) -> Self {
         Self { h, s, l }
@@ -196,6 +197,7 @@ impl From<Hsl> for [f32; 3] {
 #[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
+    use crate::Mix as _;
     use crate::space::Srgb;
 
     #[test]
@@ -305,10 +307,10 @@ mod tests {
     }
 
     #[test]
-    fn lerp_hue_shortest_path() {
+    fn mix_hue_shortest_path() {
         let a = Hsl::new(0.9, 1.0, 0.5);
         let b = Hsl::new(0.1, 1.0, 0.5);
-        let mid = a.lerp(b, 0.5);
+        let mid = a.mix(b, 0.5);
         // Shortest path from 0.9 to 0.1 goes through 0.0
         assert!(mid.h < 0.05 || mid.h > 0.95, "hue={}", mid.h);
     }

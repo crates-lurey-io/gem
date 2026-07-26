@@ -50,32 +50,6 @@ impl Oklch {
         Self { l, c, h }
     }
 
-    /// Linearly interpolates between `self` and `other` by `t`, taking the
-    /// shortest path around the hue circle.
-    ///
-    /// Interpolating in Oklch produces perceptually uniform transitions while
-    /// preserving the sense of "hue rotation".
-    ///
-    /// ## Examples
-    ///
-    /// ```rust
-    /// use gem::space::Oklch;
-    ///
-    /// let a = Oklch::new(0.5, 0.2, 0.0);
-    /// let b = Oklch::new(0.5, 0.2, 0.5);
-    /// let mid = a.lerp(b, 0.5);
-    /// assert!((mid.h - 0.25).abs() < 1e-5);
-    /// ```
-    #[must_use]
-    pub fn lerp(self, other: Self, t: f32) -> Self {
-        use crate::space::math::{lerp_f32, lerp_hue};
-        Self {
-            l: lerp_f32(self.l, other.l, t),
-            c: lerp_f32(self.c, other.c, t),
-            h: lerp_hue(self.h, other.h, t),
-        }
-    }
-
     /// Returns the hue in degrees `[0.0, 360.0)`.
     #[must_use]
     pub fn hue_degrees(self) -> f32 {
@@ -86,6 +60,33 @@ impl Oklch {
     #[must_use]
     pub fn from_degrees(l: f32, c: f32, h_deg: f32) -> Self {
         Self::new(l, c, h_deg / 360.0)
+    }
+}
+
+/// Interpolates in Oklch, taking the shortest path around the hue circle.
+///
+/// This produces perceptually uniform transitions while preserving the sense of
+/// "hue rotation", which the Cartesian [`Oklab`][crate::space::Oklab] blend does
+/// not: that one cuts through the desaturated middle of the color wheel.
+///
+/// ## Examples
+///
+/// ```rust
+/// use gem::{Mix as _, space::Oklch};
+///
+/// let a = Oklch::new(0.5, 0.2, 0.0);
+/// let b = Oklch::new(0.5, 0.2, 0.5);
+/// let mid = a.mix(b, 0.5);
+/// assert!((mid.h - 0.25).abs() < 1e-5);
+/// ```
+impl crate::Mix for Oklch {
+    fn mix(self, other: Self, t: f32) -> Self {
+        use crate::space::math::{lerp_f32, lerp_hue};
+        Self {
+            l: lerp_f32(self.l, other.l, t),
+            c: lerp_f32(self.c, other.c, t),
+            h: lerp_hue(self.h, other.h, t),
+        }
     }
 }
 
@@ -105,21 +106,22 @@ impl From<Oklch> for [f32; 3] {
 #[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
+    use crate::Mix as _;
 
     #[test]
-    fn lerp_hue_midpoint() {
+    fn mix_hue_midpoint() {
         let a = Oklch::new(0.5, 0.2, 0.0);
         let b = Oklch::new(0.5, 0.2, 0.5);
-        let mid = a.lerp(b, 0.5);
+        let mid = a.mix(b, 0.5);
         assert!((mid.h - 0.25).abs() < 1e-5, "hue={}", mid.h);
     }
 
     #[test]
-    fn lerp_hue_shortest_path() {
+    fn mix_hue_shortest_path() {
         // 0.9 -> 0.1: shortest path wraps through 0.0
         let a = Oklch::new(0.5, 0.2, 0.9);
         let b = Oklch::new(0.5, 0.2, 0.1);
-        let mid = a.lerp(b, 0.5);
+        let mid = a.mix(b, 0.5);
         assert!(mid.h < 0.05 || mid.h > 0.95, "hue={}", mid.h);
     }
 

@@ -5,6 +5,70 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0]
+
+### Added
+
+- **`gem::channel`**: `const fn` integer channel arithmetic that needs no math backend and works
+  in a `const` context. An 8-bit channel is treated as fixed point, where `255` is `1.0`.
+  - `multiply_u8(a, b)` — `a * b / 255`, the W3C `multiply` blend mode and equally the
+    premultiply-by-alpha step. `255` is the exact identity and `0` the exact annihilator.
+  - `screen_u8(a, b)` — the exact complement of `multiply_u8`.
+  - `mix_u8(a, b, t)` — interpolation with an integer `t`, exact at both endpoints and
+    symmetric under rounding in either direction.
+- **`gem::rgb::distance_sq`**: `const fn` squared euclidean distance over `(u8, u8, u8)`, for
+  nearest-color palette searches that want to stay in integer math.
+- **`const fn` operations on `Rgb888` and `Bgr888`**: `multiply`, `screen`, `mix_u8`, and
+  `distance_sq`, built on the primitives above. These are matched by *color*, not by storage
+  order, so a `Bgr888` and an `Rgb888` holding the same color give the same answer.
+- **`const fn` accessors**: `Rgb::to_rgb`, `Bgr::to_bgr`, and `Bgr::to_rgb`. `RgbColor::to_rgb`
+  is a trait method and so is not callable from a `const fn` on stable; these inherent methods
+  are, which is what makes a `const fn` color pipeline over gem's own types possible instead of
+  over bare tuples.
+- **`Mix::mix_assign`**, the in-place counterpart of `Mix::mix`.
+- A documented, crate-wide rounding invariant: every integer channel result is round-to-nearest,
+  ties away from zero. `gem::channel`'s tests prove it exhaustively over all 65 536 input pairs
+  (and all 16.7M `(a, b, t)` triples for `mix_u8`) rather than by sampling, including a test
+  pinning why the cheap truncating `(v + (v >> 8) + 1) >> 8` convention is *not* used: it is
+  exactly `floor(v / 255)`, so it drifts a channel darker on every application.
+
+### Changed
+
+- **`Lerp` and `LerpChannel` are now `Mix` and `MixChannel`**, and `Mix` has moved to the crate
+  root because it now spans both layers: `gem::Mix` is implemented by every RGB pixel format
+  *and* by `Srgb`, `LinearRgb`, `Hsl`, `Hsv`, `Oklab`, and `Oklch`. `MixChannel` lives in the new
+  `gem::channel` module alongside the integer math it is the real-valued counterpart of.
+
+  The inherent `lerp` methods on the color-space types are gone; use the trait method. `mix` also
+  reads correctly next to `mix_u8`, where two functions both called `lerp` with different `t`
+  domains would not.
+
+  ```rust,ignore
+  // Before                              // After
+  use gem::rgb::Lerp;                    use gem::Mix;
+  a.lerp(b, 0.5);                        a.mix(b, 0.5);
+  Srgb::RED.lerp(Srgb::BLUE, 0.5);       Srgb::RED.mix(Srgb::BLUE, 0.5);
+  gem::blend::lerp(..);                  gem::blend::mix(..);
+  ```
+
+- **`RgbColor::into_rgb` and `RgbaColor::into_rgba` are now `to_rgb` and `to_rgba`.** Every color
+  type in this crate is `Copy`, so nothing was ever consumed; `into_` was the wrong convention
+  per the Rust API guidelines.
+
+- **`space`, `named`, and `blend` are now `#[cfg]`-gated on `std` or `libm`** rather than always
+  compiled with a `compile_error!` if neither is present. This is the fix for the underlying
+  problem `0.1.0` worked around by setting `default = ["libm"]`, so **`default = []` is restored**
+  and a bare `cargo add gem` now gets the pixel-format layer alone.
+
+  Consumers who relied on the default feature set to get `space` must now name `std` (or `libm`)
+  explicitly. Consumers who want only zero-cost pixel formats no longer need `default-features =
+  false` — and if they set it anyway, `space`'s absence is now a normal missing module rather than
+  a hard compile error.
+
+  A new `space` feature exists to express "either backend"; `std`, `libm`, and `blend` all imply
+  it, and naming it directly without a backend is still a compile error with an actionable
+  message.
+
 ## [0.1.1] - 2026-07-04
 
 ### Fixed

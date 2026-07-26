@@ -12,6 +12,3 @@ pub use rgb_color::RgbColor;
 
 mod rgba_color;
 pub use rgba_color::RgbaColor;
-
-mod lerp;
-pub use lerp::{Lerp, LerpChannel};

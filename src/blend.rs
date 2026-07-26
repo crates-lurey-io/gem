@@ -125,23 +125,28 @@ impl Premultiplied {
     }
 }
 
-/// Linearly interpolates between two `(color, alpha)` pairs by `t`.
+/// Interpolates between two `(color, alpha)` pairs by `t`.
+///
+/// Both the color (via [`Mix`][crate::Mix]) and the alpha are interpolated;
+/// this is the straight-alpha counterpart of mixing two colors that are already
+/// known to have the same opacity.
 ///
 /// ## Examples
 ///
 /// ```rust
-/// use gem::blend::lerp;
+/// use gem::blend::mix;
 /// use gem::space::Srgb;
 ///
-/// let (c, a) = lerp(Srgb::RED, 1.0, Srgb::BLUE, 0.0, 0.5);
+/// let (c, a) = mix(Srgb::RED, 1.0, Srgb::BLUE, 0.0, 0.5);
 /// assert!((c.r - 0.5).abs() < 1e-5);
 /// assert!((c.b - 0.5).abs() < 1e-5);
 /// assert!((a - 0.5).abs() < 1e-5);
 /// ```
 #[must_use]
 #[allow(clippy::suboptimal_flops)]
-pub fn lerp(ca: Srgb, aa: f32, cb: Srgb, ab: f32, t: f32) -> (Srgb, f32) {
-    (ca.lerp(cb, t), aa + (ab - aa) * t)
+pub fn mix(ca: Srgb, aa: f32, cb: Srgb, ab: f32, t: f32) -> (Srgb, f32) {
+    use crate::Mix as _;
+    (ca.mix(cb, t), aa + (ab - aa) * t)
 }
 
 #[cfg(test)]
@@ -214,8 +219,8 @@ mod tests {
     }
 
     #[test]
-    fn lerp_colors() {
-        let (c, a) = lerp(Srgb::RED, 1.0, Srgb::BLUE, 0.0, 0.5);
+    fn mix_colors() {
+        let (c, a) = mix(Srgb::RED, 1.0, Srgb::BLUE, 0.0, 0.5);
         assert!((c.r - 0.5).abs() < 1e-5);
         assert!((c.b - 0.5).abs() < 1e-5);
         assert!((a - 0.5).abs() < 1e-5);

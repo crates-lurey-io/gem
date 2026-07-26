@@ -31,9 +31,12 @@ pub trait RgbaColor: Sized + Default + HasRed + HasGreen + HasBlue + HasAlpha {
         color
     }
 
-    /// Returns the inner representation of the color as a tuple of red, green, blue, and alpha components.
+    /// Returns the components as an `(r, g, b, a)` tuple, in color order.
+    ///
+    /// Named `to_` rather than `into_` because every color type in this crate is
+    /// `Copy`, so nothing is consumed.
     #[must_use]
-    fn into_rgba(
+    fn to_rgba(
         self,
     ) -> (
         <Self as HasRed>::Component,
@@ -59,7 +62,7 @@ mod tests {
         assert_eq!(color.blue(), 0);
         assert_eq!(color.alpha(), 255);
 
-        let (r, g, b, a) = color.into_rgba();
+        let (r, g, b, a) = color.to_rgba();
         assert_eq!(r, 255);
         assert_eq!(g, 0);
         assert_eq!(b, 0);

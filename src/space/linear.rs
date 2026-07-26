@@ -45,30 +45,6 @@ impl LinearRgb {
         Self { r, g, b }
     }
 
-    /// Linearly interpolates between `self` and `other` by `t`.
-    ///
-    /// Blending in linear light is physically correct for mixing lights.
-    ///
-    /// ## Examples
-    ///
-    /// ```rust
-    /// use gem::space::{LinearRgb, Srgb};
-    ///
-    /// let a = LinearRgb::from(Srgb::RED);
-    /// let b = LinearRgb::from(Srgb::BLUE);
-    /// let mid = a.lerp(b, 0.5);
-    /// assert!((mid.r - 0.5).abs() < 1e-6);
-    /// ```
-    #[must_use]
-    pub fn lerp(self, other: Self, t: f32) -> Self {
-        use crate::space::math::lerp_f32;
-        Self {
-            r: lerp_f32(self.r, other.r, t),
-            g: lerp_f32(self.g, other.g, t),
-            b: lerp_f32(self.b, other.b, t),
-        }
-    }
-
     /// Clamps all channels to `[0.0, 1.0]`.
     #[must_use]
     pub const fn clamp(self) -> Self {
@@ -76,6 +52,29 @@ impl LinearRgb {
             r: self.r.clamp(0.0, 1.0),
             g: self.g.clamp(0.0, 1.0),
             b: self.b.clamp(0.0, 1.0),
+        }
+    }
+}
+
+/// Interpolates in linear light, which is physically correct for mixing lights.
+///
+/// ## Examples
+///
+/// ```rust
+/// use gem::{Mix as _, space::{LinearRgb, Srgb}};
+///
+/// let a = LinearRgb::from(Srgb::RED);
+/// let b = LinearRgb::from(Srgb::BLUE);
+/// let mid = a.mix(b, 0.5);
+/// assert!((mid.r - 0.5).abs() < 1e-6);
+/// ```
+impl crate::Mix for LinearRgb {
+    fn mix(self, other: Self, t: f32) -> Self {
+        use crate::space::math::lerp_f32;
+        Self {
+            r: lerp_f32(self.r, other.r, t),
+            g: lerp_f32(self.g, other.g, t),
+            b: lerp_f32(self.b, other.b, t),
         }
     }
 }
@@ -96,6 +95,7 @@ impl From<LinearRgb> for [f32; 3] {
 #[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
+    use crate::Mix as _;
     use crate::space::Srgb;
 
     #[test]
@@ -110,10 +110,10 @@ mod tests {
     }
 
     #[test]
-    fn lerp_midpoint() {
+    fn mix_midpoint() {
         let a = LinearRgb::new(1.0, 0.0, 0.0);
         let b = LinearRgb::new(0.0, 0.0, 1.0);
-        let mid = a.lerp(b, 0.5);
+        let mid = a.mix(b, 0.5);
         assert!((mid.r - 0.5).abs() < 1e-6);
         assert!((mid.b - 0.5).abs() < 1e-6);
     }

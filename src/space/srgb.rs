@@ -13,9 +13,11 @@
 /// ```rust
 /// use gem::space::Srgb;
 ///
+/// use gem::Mix as _;
+///
 /// let red = Srgb::new(1.0, 0.0, 0.0);
 /// let blue = Srgb::new(0.0, 0.0, 1.0);
-/// let purple = red.lerp(blue, 0.5);
+/// let purple = red.mix(blue, 0.5);
 /// assert!((purple.r - 0.5).abs() < 1e-6);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -130,33 +132,6 @@ impl Srgb {
         }
     }
 
-    /// Linearly interpolates between `self` and `other` by `t`.
-    ///
-    /// Note: for perceptually uniform interpolation, convert to
-    /// [`Oklch`][crate::space::Oklch] first.
-    ///
-    /// `t = 0.0` returns `self`; `t = 1.0` returns `other`.
-    ///
-    /// ## Examples
-    ///
-    /// ```rust
-    /// use gem::space::Srgb;
-    ///
-    /// let mid = Srgb::RED.lerp(Srgb::BLUE, 0.5);
-    /// assert!((mid.r - 0.5).abs() < 1e-6);
-    /// assert!((mid.b - 0.5).abs() < 1e-6);
-    /// ```
-    #[must_use]
-    #[allow(clippy::suboptimal_flops)]
-    pub fn lerp(self, other: Self, t: f32) -> Self {
-        use crate::space::math::lerp_f32;
-        Self {
-            r: lerp_f32(self.r, other.r, t),
-            g: lerp_f32(self.g, other.g, t),
-            b: lerp_f32(self.b, other.b, t),
-        }
-    }
-
     /// Clamps all channels to `[0.0, 1.0]`.
     #[must_use]
     pub const fn clamp(self) -> Self {
@@ -191,6 +166,34 @@ impl Srgb {
     #[must_use]
     pub fn is_dark(self) -> bool {
         self.luminance() < 0.5
+    }
+}
+
+/// Interpolates each gamma-encoded channel independently.
+///
+/// This is the fast, familiar blend, not the physically-correct one: mixing
+/// gamma-encoded channels darkens the midpoint of a bright gradient. Convert to
+/// [`LinearRgb`][crate::space::LinearRgb] for physically-correct light mixing,
+/// or to [`Oklab`][crate::space::Oklab] for perceptually-even ones.
+///
+/// ## Examples
+///
+/// ```rust
+/// use gem::{Mix as _, space::Srgb};
+///
+/// let mid = Srgb::RED.mix(Srgb::BLUE, 0.5);
+/// assert!((mid.r - 0.5).abs() < 1e-6);
+/// assert!((mid.b - 0.5).abs() < 1e-6);
+/// ```
+impl crate::Mix for Srgb {
+    #[allow(clippy::suboptimal_flops)]
+    fn mix(self, other: Self, t: f32) -> Self {
+        use crate::space::math::lerp_f32;
+        Self {
+            r: lerp_f32(self.r, other.r, t),
+            g: lerp_f32(self.g, other.g, t),
+            b: lerp_f32(self.b, other.b, t),
+        }
     }
 }
 
@@ -234,6 +237,7 @@ impl core::fmt::UpperHex for Srgb {
 )]
 mod tests {
     use super::*;
+    use crate::Mix as _;
 
     #[test]
     fn new() {
@@ -279,17 +283,17 @@ mod tests {
     }
 
     #[test]
-    fn lerp_midpoint() {
-        let mid = Srgb::RED.lerp(Srgb::BLUE, 0.5);
+    fn mix_midpoint() {
+        let mid = Srgb::RED.mix(Srgb::BLUE, 0.5);
         assert!((mid.r - 0.5).abs() < 1e-6);
         assert!((mid.g).abs() < 1e-6);
         assert!((mid.b - 0.5).abs() < 1e-6);
     }
 
     #[test]
-    fn lerp_endpoints() {
-        assert_eq!(Srgb::RED.lerp(Srgb::BLUE, 0.0), Srgb::RED);
-        assert_eq!(Srgb::RED.lerp(Srgb::BLUE, 1.0), Srgb::BLUE);
+    fn mix_endpoints() {
+        assert_eq!(Srgb::RED.mix(Srgb::BLUE, 0.0), Srgb::RED);
+        assert_eq!(Srgb::RED.mix(Srgb::BLUE, 1.0), Srgb::BLUE);
     }
 
     #[test]

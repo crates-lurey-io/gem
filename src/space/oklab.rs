@@ -17,12 +17,12 @@
 /// ## Examples
 ///
 /// ```rust
-/// use gem::space::{Oklab, Srgb};
+/// use gem::{Mix as _, space::{Oklab, Srgb}};
 ///
 /// // Perceptually-uniform midpoint between red and blue
 /// let red = Oklab::from(Srgb::RED);
 /// let blue = Oklab::from(Srgb::BLUE);
-/// let mid = red.lerp(blue, 0.5);
+/// let mid = red.mix(blue, 0.5);
 /// let result = Srgb::from(mid).clamp();
 /// // The result will be a perceptually balanced purple
 /// assert!(result.r > 0.3 && result.b > 0.3);
@@ -44,31 +44,6 @@ impl Oklab {
     #[must_use]
     pub const fn new(l: f32, a: f32, b: f32) -> Self {
         Self { l, a, b }
-    }
-
-    /// Linearly interpolates between `self` and `other` by `t`.
-    ///
-    /// Interpolating in Oklab produces perceptually uniform transitions — the
-    /// perceived rate of change is constant throughout the blend.
-    ///
-    /// ## Examples
-    ///
-    /// ```rust
-    /// use gem::space::{Oklab, Srgb};
-    ///
-    /// let red = Oklab::from(Srgb::RED);
-    /// let blue = Oklab::from(Srgb::BLUE);
-    /// let mid = red.lerp(blue, 0.5);
-    /// assert!(mid.l > 0.0 && mid.l < 1.0);
-    /// ```
-    #[must_use]
-    pub fn lerp(self, other: Self, t: f32) -> Self {
-        use crate::space::math::lerp_f32;
-        Self {
-            l: lerp_f32(self.l, other.l, t),
-            a: lerp_f32(self.a, other.a, t),
-            b: lerp_f32(self.b, other.b, t),
-        }
     }
 
     /// Returns the chroma (colorfulness), equal to `sqrt(a^2 + b^2)`.
@@ -110,10 +85,35 @@ impl From<Oklab> for [f32; 3] {
     }
 }
 
+/// Interpolates in Oklab, producing perceptually uniform transitions: the
+/// perceived rate of change is constant throughout the blend.
+///
+/// ## Examples
+///
+/// ```rust
+/// use gem::{Mix as _, space::{Oklab, Srgb}};
+///
+/// let red = Oklab::from(Srgb::RED);
+/// let blue = Oklab::from(Srgb::BLUE);
+/// let mid = red.mix(blue, 0.5);
+/// assert!(mid.l > 0.0 && mid.l < 1.0);
+/// ```
+impl crate::Mix for Oklab {
+    fn mix(self, other: Self, t: f32) -> Self {
+        use crate::space::math::lerp_f32;
+        Self {
+            l: lerp_f32(self.l, other.l, t),
+            a: lerp_f32(self.a, other.a, t),
+            b: lerp_f32(self.b, other.b, t),
+        }
+    }
+}
+
 #[cfg(test)]
 #[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
+    use crate::Mix as _;
     use crate::space::Srgb;
 
     #[test]
@@ -163,10 +163,10 @@ mod tests {
     }
 
     #[test]
-    fn lerp_midpoint_lightness() {
+    fn mix_midpoint_lightness() {
         let black = Oklab::from(Srgb::BLACK);
         let white = Oklab::from(Srgb::WHITE);
-        let mid = black.lerp(white, 0.5);
+        let mid = black.mix(white, 0.5);
         assert!((mid.l - 0.5).abs() < 0.05, "l={}", mid.l);
     }
 

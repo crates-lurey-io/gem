@@ -40,29 +40,6 @@ impl Hsv {
         Self { h, s, v }
     }
 
-    /// Linearly interpolates between `self` and `other` by `t`, taking the
-    /// shortest path around the hue circle.
-    ///
-    /// ## Examples
-    ///
-    /// ```rust
-    /// use gem::space::Hsv;
-    ///
-    /// let a = Hsv::new(0.0, 1.0, 1.0);
-    /// let b = Hsv::new(1.0 / 3.0, 1.0, 1.0);
-    /// let mid = a.lerp(b, 0.5);
-    /// assert!((mid.h - 1.0 / 6.0).abs() < 1e-5);
-    /// ```
-    #[must_use]
-    pub fn lerp(self, other: Self, t: f32) -> Self {
-        use crate::space::math::{lerp_f32, lerp_hue};
-        Self {
-            h: lerp_hue(self.h, other.h, t),
-            s: lerp_f32(self.s, other.s, t),
-            v: lerp_f32(self.v, other.v, t),
-        }
-    }
-
     /// Returns the hue in degrees `[0.0, 360.0)`.
     #[must_use]
     pub fn hue_degrees(self) -> f32 {
@@ -73,6 +50,30 @@ impl Hsv {
     #[must_use]
     pub fn from_degrees(h_deg: f32, s: f32, v: f32) -> Self {
         Self::new(h_deg / 360.0, s, v)
+    }
+}
+
+/// Interpolates hue along the shortest path around the circle, and saturation
+/// and value linearly.
+///
+/// ## Examples
+///
+/// ```rust
+/// use gem::{Mix as _, space::Hsv};
+///
+/// let a = Hsv::new(0.0, 1.0, 1.0);
+/// let b = Hsv::new(1.0 / 3.0, 1.0, 1.0);
+/// let mid = a.mix(b, 0.5);
+/// assert!((mid.h - 1.0 / 6.0).abs() < 1e-5);
+/// ```
+impl crate::Mix for Hsv {
+    fn mix(self, other: Self, t: f32) -> Self {
+        use crate::space::math::{lerp_f32, lerp_hue};
+        Self {
+            h: lerp_hue(self.h, other.h, t),
+            s: lerp_f32(self.s, other.s, t),
+            v: lerp_f32(self.v, other.v, t),
+        }
     }
 }
 
@@ -92,6 +93,7 @@ impl From<Hsv> for [f32; 3] {
 #[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
+    use crate::Mix as _;
     use crate::space::Srgb;
 
     #[test]
@@ -129,7 +131,7 @@ mod tests {
     fn lerp_hue() {
         let a = Hsv::new(0.0, 1.0, 1.0);
         let b = Hsv::new(1.0 / 3.0, 1.0, 1.0);
-        let mid = a.lerp(b, 0.5);
+        let mid = a.mix(b, 0.5);
         assert!((mid.h - 1.0 / 6.0).abs() < 1e-5, "hue={}", mid.h);
     }
 }

@@ -7,6 +7,29 @@ Color representations and conversions.
 [![Crates.io Version](https://img.shields.io/crates/v/gem)](https://crates.io/crates/gem)
 [![codecov](https://codecov.io/gh/crates-lurey-io/gem/graph/badge.svg?token=Z3VUWA3WYY)](https://codecov.io/gh/crates-lurey-io/gem)
 
+## Layers
+
+`gem` splits into two layers, and you only pay for the one you use.
+
+The **pixel-format layer** (`rgb`, `gray`, `alpha`, `channel`) is memory-layout-accurate types
+plus `const` integer channel arithmetic. It needs no math backend, no `std`, and no features, so
+a bare `cargo add gem` gets you exactly this.
+
+The **color-space layer** (`space`, `named`, `blend`) is perceptual and working-space types.
+Accurate gamma correction (`x^2.4`) and trigonometry need real math, so these are compiled only
+when `std` or `libm` is enabled.
+
+```toml
+# Pixel formats and channel math only.
+gem = "0.2"
+
+# ...plus color spaces, using the standard library's math.
+gem = { version = "0.2", features = ["std"] }
+
+# ...plus color spaces, on no_std.
+gem = { version = "0.2", default-features = false, features = ["libm"] }
+```
+
 ## Examples
 
 ```sh
@@ -29,6 +52,26 @@ for y in 0..50 {
 ```
 
 ![Example](./examples/draw-png.png)
+
+Channel math is `const`, so a palette or a lighting table can be computed at compile time:
+
+```rust
+use gem::rgb::Rgb888;
+
+const GRASS: Rgb888 = Rgb888::from_rgb(200, 180, 60);
+const SHADOWED: Rgb888 = GRASS.multiply(Rgb888::from_rgb(128, 128, 128));
+
+assert_eq!(SHADOWED, Rgb888::from_rgb(100, 90, 30));
+```
+
+## Rounding
+
+Every integer channel result in this crate is round-to-nearest, ties away from zero. That is a
+crate-wide guarantee, exhaustively tested, not a per-function implementation detail.
+
+The cheap alternative, `(v + (v >> 8) + 1) >> 8`, is exactly `floor(v / 255)` for every reachable
+input. It biases every channel downward by up to a full step, so an image composited repeatedly
+visibly darkens. Nothing here does that.
 
 ## Contributing
 

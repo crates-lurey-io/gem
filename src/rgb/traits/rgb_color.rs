@@ -26,9 +26,14 @@ pub trait RgbColor: Sized + Default + HasRed + HasGreen + HasBlue {
         color
     }
 
-    /// Returns the inner representation of the color as a tuple of red, green, and blue components.
+    /// Returns the components as an `(r, g, b)` tuple, in color order.
+    ///
+    /// Named `to_` rather than `into_` because every color type in this crate is
+    /// `Copy`, so nothing is consumed. Concrete types additionally provide a
+    /// `const fn to_rgb` inherent method (see [`Rgb::to_rgb`][crate::rgb::Rgb::to_rgb]),
+    /// which shadows this one and is usable in `const` contexts.
     #[must_use]
-    fn into_rgb(
+    fn to_rgb(
         self,
     ) -> (
         <Self as HasRed>::Component,
@@ -54,7 +59,7 @@ mod tests {
         assert_eq!(color.green(), 0);
         assert_eq!(color.blue(), 0);
 
-        let (r, g, b) = color.into_rgb();
+        let (r, g, b) = color.to_rgb();
         assert_eq!(r, 255);
         assert_eq!(g, 0);
         assert_eq!(b, 0);

@@ -71,6 +71,40 @@ impl Oklab {
             ..self
         }
     }
+
+    /// Squared euclidean distance to `other`, in Oklab.
+    ///
+    /// The square root is deliberately not taken: comparing squared distances
+    /// orders candidates identically, which is what a nearest-color search
+    /// actually needs, in the same naive squared-difference form [`chroma`][Self::chroma]
+    /// already uses for the `a`/`b` plane. Unlike [`rgb::distance_sq`][crate::rgb::distance_sq],
+    /// which is a cheap but perceptually-skewed distance over gamma-encoded sRGB, this is over
+    /// Oklab's perceptually-uniform axes, so equal distances read as equally different to the
+    /// eye — this is the comparison [`rgb::distance_sq`][crate::rgb::distance_sq]'s docs point to.
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use gem::space::{Oklab, Srgb};
+    ///
+    /// let black = Oklab::from(Srgb::BLACK);
+    /// assert_eq!(black.distance_sq(black), 0.0);
+    ///
+    /// let white = Oklab::from(Srgb::WHITE);
+    /// assert!(black.distance_sq(white) > 0.0);
+    ///
+    /// // Symmetric, and usable in a `const` context.
+    /// const D: f32 = Oklab::new(0.0, 0.0, 0.0).distance_sq(Oklab::new(1.0, 0.0, 0.0));
+    /// assert_eq!(D, 1.0);
+    /// ```
+    #[must_use]
+    #[allow(clippy::suboptimal_flops)]
+    pub const fn distance_sq(self, other: Self) -> f32 {
+        let dl = self.l - other.l;
+        let da = self.a - other.a;
+        let db = self.b - other.b;
+        dl * dl + da * da + db * db
+    }
 }
 
 impl From<[f32; 3]> for Oklab {
@@ -168,6 +202,34 @@ mod tests {
         let white = Oklab::from(Srgb::WHITE);
         let mid = black.mix(white, 0.5);
         assert!((mid.l - 0.5).abs() < 0.05, "l={}", mid.l);
+    }
+
+    #[test]
+    fn distance_sq_self_is_zero() {
+        let lab = Oklab::new(0.5, 0.1, -0.2);
+        assert_eq!(lab.distance_sq(lab), 0.0);
+    }
+
+    #[test]
+    fn distance_sq_black_white() {
+        let black = Oklab::from(Srgb::BLACK);
+        let white = Oklab::from(Srgb::WHITE);
+        assert!((black.distance_sq(white) - 1.0).abs() < 1e-4);
+    }
+
+    #[test]
+    fn distance_sq_is_symmetric() {
+        let a = Oklab::new(0.2, 0.1, -0.3);
+        let b = Oklab::new(0.8, -0.2, 0.4);
+        assert!((a.distance_sq(b) - b.distance_sq(a)).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn distance_sq_matches_manual_sum_of_squares() {
+        let a = Oklab::new(0.0, 0.0, 0.0);
+        let b = Oklab::new(1.0, 2.0, 3.0);
+        // 1^2 + 2^2 + 3^2 = 14
+        assert!((a.distance_sq(b) - 14.0).abs() < f32::EPSILON);
     }
 
     #[test]

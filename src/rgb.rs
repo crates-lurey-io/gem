@@ -88,7 +88,8 @@ pub use formats::*;
 ///
 /// This is a plain euclidean distance in gamma-encoded sRGB, which is fast but
 /// not perceptually uniform. For perceptual nearest-color matching, convert to
-/// [`Oklab`][crate::space::Oklab] and compare there.
+/// [`Oklab`][crate::space::Oklab] and use
+/// [`Oklab::distance_sq`][crate::space::Oklab::distance_sq] instead.
 ///
 /// Takes tuples rather than a color type so callers holding raw channels (a
 /// shader uniform, an FFI struct, a packed `u32`) need no conversion; for gem's

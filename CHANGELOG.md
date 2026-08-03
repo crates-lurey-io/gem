@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`Oklab::distance_sq`**: squared euclidean distance between two `Oklab` colors, the
+  perceptually-uniform counterpart to `gem::rgb::distance_sq`. `Oklab` had no way to actually do
+  the nearest-color comparison its own docs (and `rgb::distance_sq`'s) pointed callers at.
+
 ## [0.2.0] - 2026-07-26
 
 ### Added

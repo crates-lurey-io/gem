@@ -179,6 +179,18 @@ impl From<Rgb888> for [u8; 3] {
     }
 }
 
+impl From<(u8, u8, u8)> for Rgb888 {
+    fn from((r, g, b): (u8, u8, u8)) -> Self {
+        Self::from_rgb(r, g, b)
+    }
+}
+
+impl From<Rgb888> for (u8, u8, u8) {
+    fn from(color: Rgb888) -> Self {
+        color.to_rgb()
+    }
+}
+
 impl core::fmt::LowerHex for Rgb888 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         use crate::rgb::{HasBlue, HasGreen, HasRed};
@@ -217,6 +229,11 @@ mod tests {
     #[test]
     fn from_array() {
         assert_eq!(Rgb888::from([255_u8, 0, 0]), Rgb888::from_rgb(255, 0, 0));
+    }
+
+    #[test]
+    fn from_tuple() {
+        assert_eq!(Rgb888::from((255_u8, 0, 0)), Rgb888::from_rgb(255, 0, 0));
     }
 
     #[test]
@@ -291,6 +308,13 @@ mod tests {
     fn into_array() {
         let arr: [u8; 3] = Rgb888::from_rgb(255, 128, 0).into();
         assert_eq!(arr, [255, 128, 0]);
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn into_tuple() {
+        let tuple: (u8, u8, u8) = Rgb888::from_rgb(255, 128, 0).into();
+        assert_eq!(tuple, (255, 128, 0));
     }
 
     #[test]
